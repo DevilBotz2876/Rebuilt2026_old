@@ -1,4 +1,4 @@
-package frc.robot.config.game.Rebuilt2026;
+package frc.robot.config.game.rebuilt2026;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

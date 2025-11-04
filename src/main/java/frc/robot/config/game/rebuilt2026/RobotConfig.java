@@ -1,4 +1,4 @@
-package frc.robot.config.game.Rebuilt2026;
+package frc.robot.config.game.rebuilt2026;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;

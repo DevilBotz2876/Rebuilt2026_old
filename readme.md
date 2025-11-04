@@ -86,7 +86,7 @@ integration process.
             * ...
       * [`config/`](src/main/java/frc/robot/config/): The config directory is used to support multiple robot versions using the same code base.
          * `game/`(src/main/java/frc/robot/config/game/): Each game will generally have it's own robot configuration.
-            * `Rebuilt2026/`: game-specific robot configurations are stored here.
+            * `rebuilt2026/`: game-specific robot configurations are stored here.
                * `RobotConfig.java`: Defines all of the subsystems and controls required for a "robot". Each robot _variant_ extends RobotConfig and instantiates the subsystems and overrides constants as needed. Implements simulation stubs for all subsystems.
               * `RobotConfigPhoenix..java`: Robot config for the "Phoenix" robot that instantiates specific subsystems (e.g. drivetrain and vision) using specific hardware IO instances. Everything else not explicitly overrideen will use the default _stub _versions.
                * ...
