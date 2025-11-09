@@ -4,6 +4,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.Robot;
+import frc.robot.subsystems.implementations.drive.generated.CommandSwerveDrivetrain;
 import org.littletonrobotics.junction.AutoLog;
 import swervelib.SwerveDrive;
 
@@ -33,6 +34,20 @@ public class DriveIO {
     inputs.flippedPoseRotInDegrees = inputs.flippedPose.getRotation().getDegrees();
     if (!Robot.isSimulation()) {
       inputs.currentAcceleration = swerveDrive.getAccel().get();
+    }
+  }
+
+  public void updateInputs(DriveIOInputs inputs, CommandSwerveDrivetrain drivetrain) {
+    inputs.pose = drivetrain.getState().Pose;
+    inputs.poseX = inputs.pose.getTranslation().getX();
+    inputs.poseY = inputs.pose.getTranslation().getY();
+    inputs.poseRotInDegrees = inputs.pose.getRotation().getDegrees();
+    inputs.flippedPose = FlippingUtil.flipFieldPose(inputs.pose);
+    inputs.flippedPoseX = inputs.flippedPose.getTranslation().getX();
+    inputs.flippedPoseY = inputs.flippedPose.getTranslation().getY();
+    inputs.flippedPoseRotInDegrees = inputs.flippedPose.getRotation().getDegrees();
+    if (!Robot.isSimulation()) {
+      // inputs.currentAcceleration = drivetrain.getState().Speeds..getAccel().get();
     }
   }
   // Other methods for controlling the drive subsystem...
