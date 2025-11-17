@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.config.game.rebuilt2026.*;
 import frc.robot.util.Elastic;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -23,8 +25,19 @@ public class RobotContainer {
     // Load robot name from configuration file
     // Check if the robot is running in simulation
     if (RobotBase.isSimulation()) {
-
       Properties simulationProperties = new Properties();
+      Properties p = new Properties();
+
+      // test properties loading
+      try {
+        FileReader propertiesFile = new FileReader("src/main/deploy/robot_config.properties");
+        p.load(propertiesFile);
+        System.out.println(p.toString());
+        propertiesFile.close();
+      } catch (Exception e) {
+        System.out.println(e);
+      }
+      
 
       try (FileInputStream input = new FileInputStream("simulation.properties")) {
         simulationProperties.load(input);
