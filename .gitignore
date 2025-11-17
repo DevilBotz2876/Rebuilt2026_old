@@ -207,3 +207,6 @@ compile_commands.json
 
 # Eclipse generated file for annotation processors
 .factorypath
+
+# .properties files in src/main/deploy, in case somebody forgets to clean before pushing
+src/main/deploy/*.properties
