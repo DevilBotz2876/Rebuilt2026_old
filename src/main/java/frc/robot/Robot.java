@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.config.game.rebuilt2026.*;
 import frc.robot.util.DevilBotState;
 import frc.robot.util.DevilBotState.State;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -138,7 +137,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testPeriodic() {
     // Allow moving robot on the sim field when in test mode
-    RobotConfig.drive.setPoseToMatchField();
+    // RobotConfig.drive.setPoseToMatchField();
   }
 
   @Override

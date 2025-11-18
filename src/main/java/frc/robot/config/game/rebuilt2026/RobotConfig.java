@@ -11,13 +11,17 @@ import frc.robot.subsystems.implementations.drive.DriveBase;
 
 /* Put all constants here with reasonable defaults */
 public class RobotConfig {
-  public static DriveBase drive;
-  public static SendableChooser<Command> autoChooser;
+  public DriveBase drive;
+  public SendableChooser<Command> autoChooser;
   // TODO: Add VisionSubsystem Declaration
 
   // Controls
   public CommandXboxController mainController = new CommandXboxController(0);
   public CommandXboxController assistController = new CommandXboxController(1);
+
+  public RobotConfig() {
+    // no-args constructor, for now
+  }
 
   public RobotConfig(boolean stubDrive, boolean stubAuto, boolean stubVision) {
     if (stubDrive) {
@@ -41,14 +45,14 @@ public class RobotConfig {
       // TODO: Add VisionSubsystem Simulation Support
 
       // HACK just to verify autos are visible without connecting to robot
-      RobotConfig.autoChooser = AutoBuilder.buildAutoChooser("Sit Still");
+      this.autoChooser = AutoBuilder.buildAutoChooser("Sit Still");
     }
 
     // Send vision-based odometry measurements to drive's odometry calculations
     // vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
 
-    if (null != RobotConfig.autoChooser) {
-      SmartDashboard.putData("Autonomous", RobotConfig.autoChooser);
+    if (null != this.autoChooser) {
+      SmartDashboard.putData("Autonomous", this.autoChooser);
     }
   }
 }

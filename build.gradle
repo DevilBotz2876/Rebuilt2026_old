@@ -161,6 +161,40 @@ spotless {
     }
 }
 
+tasks.addRule("Pattern: DBBuild-<PROFILE>: builds the robot with the given profile. Requires a corresponding .properties file in \"profiles\".") { String taskName ->
+    if (taskName.startsWith("DBBuild-")){
+        def configFile = taskName - "DBBuild-"
+        task(taskName, type: Copy) {
+            // assert that the given config file exists
+            assert file("profiles/" + configFile + ".properties").exists()
+
+            // proceed, delete old .properties files
+            println "Deleting previous properties files..."
+            delete fileTree('src/main/deploy'){
+                include '*.properties'
+            }
+
+            // copy properties file over and build
+            println "Building robot with profile \""  + configFile + "\"..."
+            from ('profiles'){
+                include configFile + ".properties"
+            }
+
+            into 'src/main/deploy'
+            rename (configFile + ".properties", "robot_config.properties")
+            dependsOn build
+        }
+    }
+}
+
+tasks.register("clean-profiles"){
+    group = "DevilBotz"
+    println "Deleting .properties files..."
+    delete fileTree('src/main/deploy'){
+        include '*.properties'
+    }
+}
+
 // Disable automatics spotless execution during a build
 // By default, spotless is configured to run during a build. This is generally undesirable because we don't want formatting errors to cause build failures and hinder developent, debugging, and testing. We generally want to run and apply the spotless changes prior to committing and/or pushing the code to a source code repository (e.g. git)
 if (!('spotlessCheck' in gradle.startParameter.taskNames)) {
