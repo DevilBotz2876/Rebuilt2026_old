@@ -166,7 +166,7 @@ tasks.addRule("Pattern: DBBuild-<PROFILE>: builds the robot with the given profi
         def configFile = taskName - "DBBuild-"
         task(taskName, type: Copy) {
             // assert that the given config file exists
-            assert file("profiles/" + configFile + ".properties").exists() 
+            assert file("profiles/" + configFile + ".properties").exists()
 
             // proceed, delete old .properties files
             println "Deleting previous properties files..."
@@ -179,7 +179,7 @@ tasks.addRule("Pattern: DBBuild-<PROFILE>: builds the robot with the given profi
             from ('profiles'){
                 include configFile + ".properties"
             }
-            
+
             into 'src/main/deploy'
             rename (configFile + ".properties", "robot_config.properties")
             dependsOn build
