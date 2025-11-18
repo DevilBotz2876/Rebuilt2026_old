@@ -19,7 +19,7 @@ public class RobotConfig {
   public CommandXboxController mainController = new CommandXboxController(0);
   public CommandXboxController assistController = new CommandXboxController(1);
 
-  public RobotConfig(){
+  public RobotConfig() {
     // no-args constructor, for now
   }
 

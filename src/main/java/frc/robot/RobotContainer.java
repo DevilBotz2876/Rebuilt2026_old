@@ -21,7 +21,6 @@ public class RobotContainer {
   public RobotConfig robotConfig;
   private static final String robotNameKey = "Robot Name";
 
-
   public RobotContainer() {
     // Load robot name from configuration file
     // Check if the robot is running in simulation
@@ -63,8 +62,9 @@ public class RobotContainer {
     robotName = Preferences.getString(robotNameKey, robotName);
 
     System.out.println("Loading Settings for Robot Name = " + robotName);
-    Elastic
-        .sendNotification(new Elastic.Notification().withDescription("Loading Settings for Robot Name = " + robotName));
+    Elastic.sendNotification(
+        new Elastic.Notification()
+            .withDescription("Loading Settings for Robot Name = " + robotName));
 
     // robotConfig.configureBindings();
   }
