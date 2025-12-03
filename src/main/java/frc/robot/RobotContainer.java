@@ -19,7 +19,6 @@ import java.util.Properties;
 
 public class RobotContainer {
   public RobotConfig robotConfig;
-  private static final String robotNameKey = "Robot Name";
 
   public RobotContainer() {
     // Load robot name from configuration file
@@ -58,8 +57,8 @@ public class RobotContainer {
       System.exit(1);
     }
 
-    Preferences.initString(robotNameKey, robotName);
-    robotName = Preferences.getString(robotNameKey, robotName);
+    Preferences.initString("Robot Name", robotName);
+    robotName = Preferences.getString("Robot Name", robotName);
 
     System.out.println("Loading Settings for Robot Name = " + robotName);
     Elastic.sendNotification(
