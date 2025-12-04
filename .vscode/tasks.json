@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "DBBuild - build DEFAULT profile",
+            "type": "shell",
+            "command": "sh scripts/dbbuild-default.sh",
+            "windows": {
+                "command": "bat scripts/dbbuild-default.bat"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+	]
+}
