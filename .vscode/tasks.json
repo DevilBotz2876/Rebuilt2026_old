@@ -2,11 +2,12 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-            "label": "DBBuild - build DEFAULT profile",
+            "label": "Build DevilBotz Robot",
             "type": "shell",
-            "command": "sh scripts/dbbuild-default.sh",
+            "command": "sh scripts/dbbuild.sh ${input:profile}",
+			
             "windows": {
-                "command": "bat scripts/dbbuild-default.bat"
+                "command": "bat scripts/dbbuild.bat ${input:profile}"
             },
             "group": "build",
             "presentation": {
@@ -14,5 +15,13 @@
                 "panel": "new"
             }
         }
-	]
+	],
+	"inputs": [
+        {
+            "id": "profile",
+            "description": "Build Profile. See src/main/resources for available profiles.",
+            "default": "default",
+            "type": "promptString"
+        },
+    ]
 }

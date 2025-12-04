@@ -1,1 +1,0 @@
-sh gradlew DBBuild-default
