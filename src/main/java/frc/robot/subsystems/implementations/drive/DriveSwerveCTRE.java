@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstantsPhoenix;
+import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstants;
 import frc.robot.io.interfaces.DriveIO;
 import frc.robot.io.interfaces.DriveIOInputsAutoLogged;
 import frc.robot.subsystems.implementations.drive.generated.CommandSwerveDrivetrain;
@@ -37,11 +37,11 @@ public class DriveSwerveCTRE extends DriveBase {
   DriveIO io = new DriveIO();
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
 
-  public DriveSwerveCTRE() {
+  public DriveSwerveCTRE(TunerConstants tunerConstants) {
     super("CTRE");
-    drivetrain = TunerConstantsPhoenix.createDrivetrain();
+    drivetrain = tunerConstants.createDrivetrain();
     MaxSpeed =
-        TunerConstantsPhoenix.kSpeedAt12Volts.in(
+      tunerConstants.kSpeedAt12Volts.in(
             MetersPerSecond); // kSpeedAt12Volts desired top speed
     MaxAngularRate =
         RotationsPerSecond.of(0.75)
@@ -67,14 +67,14 @@ public class DriveSwerveCTRE extends DriveBase {
     if (fieldOrientedDrive) {
       drivetrain.setControl(
           driveFieldCentric
-              .withVelocityX(velocity.vxMetersPerSecond) // Drive forward with negative Y (forward)
-              .withVelocityY(velocity.vyMetersPerSecond) // Drive left with negative X (left)
+              .withVelocityX(velocity.vxMetersPerSecond) 
+              .withVelocityY(velocity.vyMetersPerSecond) 
               .withRotationalRate(velocity.omegaRadiansPerSecond));
     } else {
       drivetrain.setControl(
           driveRobotCentric
-              .withVelocityX(velocity.vxMetersPerSecond) // Drive forward with negative Y (forward)
-              .withVelocityY(velocity.vyMetersPerSecond) // Drive left with negative X (left)
+              .withVelocityX(velocity.vxMetersPerSecond)
+              .withVelocityY(velocity.vyMetersPerSecond)
               .withRotationalRate(velocity.omegaRadiansPerSecond));
     }
   }

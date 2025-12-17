@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.config.game.rebuilt2026.*;
+import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstants;
+import frc.robot.subsystems.implementations.drive.DriveSwerveCTRE;
 import frc.robot.subsystems.implementations.drive.DriveSwerveYAGSL;
 import frc.robot.util.Elastic;
 import java.io.FileInputStream;
@@ -40,10 +42,12 @@ public class RobotContainer {
     String robotDrive = simulationProperties.getProperty("robot.drive", "UNKNOWN");
     String driveConfigPath = simulationProperties.getProperty("robot.drive.configPath", "UNKNOWN");
 
-    // System.out.println(robotName + ", " + robotDrive + ", " + driveConfigPath);
+    System.out.println(robotName + ", " + robotDrive + ", " + driveConfigPath);
 
     if (robotDrive.equals("yagsl")) {
       robotConfig.drive = new DriveSwerveYAGSL(driveConfigPath);
+    } else if(robotDrive.equals("ctre")) {
+      robotConfig.drive = new DriveSwerveCTRE(new TunerConstants(simulationProperties));
     }
 
     if (Robot.isSimulation()) {

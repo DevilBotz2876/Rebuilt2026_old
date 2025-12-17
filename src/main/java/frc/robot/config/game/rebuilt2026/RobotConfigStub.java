@@ -12,7 +12,7 @@ public class RobotConfigStub extends RobotConfig {
     super(false, true, true);
 
     // drive = new DriveSwerveYAGSL("yagsl/stub");
-    drive = new DriveSwerveCTRE(); // most like here is where the TunerConstant wanted is choosen
+    // drive = new DriveSwerveCTRE(); 
     if (Robot.isSimulation()) {
       drive.setPose(new Pose2d(new Translation2d(1, 1), new Rotation2d()));
     }
