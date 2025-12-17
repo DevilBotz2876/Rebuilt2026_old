@@ -69,7 +69,7 @@ public class RobotContainer {
         new Elastic.Notification()
             .withDescription("Loading Settings for Robot Name = " + robotName));
 
-    // robotConfig.configureBindings();
+    robotConfig.configureBindings();
   }
 
   public Command getAutonomousCommand() {
