@@ -176,7 +176,7 @@ tasks.addRule("Pattern: DBBuild-<PROFILE>: builds the robot with the given profi
 
             // copy properties file over and build
             println "Building robot with profile \""  + configFile + "\"..."
-            from ('profiles'){
+            from ('src/main/resources'){
                 include configFile + ".properties"
             }
 
