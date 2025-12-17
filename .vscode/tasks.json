@@ -7,7 +7,7 @@
             "command": "sh scripts/dbbuild.sh ${input:profile}",
 			
             "windows": {
-                "command": "./scripts/dbbuild.bat ${input:profile}"
+                "command": ".\\scripts\\dbbuild.bat ${input:profile}"
             },
             "group": "build",
             "presentation": {
