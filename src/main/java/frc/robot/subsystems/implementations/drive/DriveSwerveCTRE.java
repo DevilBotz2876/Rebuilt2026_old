@@ -128,64 +128,18 @@ public class DriveSwerveCTRE extends DriveBase {
 
   @Override
   public void lockPose() {
-    // dont see a methods so may have this one
-    // SwerveRequest.PointWheelsAt pointAt = new SwerveRequest.PointWheelsAt().
-    // drivetrain.getModule(0).apply(, null);
+    SwerveRequest.SwerveDriveBrake xBrake = new SwerveRequest.SwerveDriveBrake();
+    drivetrain.setControl(xBrake);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs, moduleInputs, drivetrain);
     Logger.processInputs("Drive", inputs);
-    Logger.processInputs("Drive/Module/frontleft", moduleInputs[0]);
-    Logger.processInputs("Drive/Module/frontright", moduleInputs[1]);
-    Logger.processInputs("Drive/Module/backleft", moduleInputs[2]);
-    Logger.processInputs("Drive/Module/backright", moduleInputs[3]);
-
-    // smartdashboard module info
-
-    // for (int i = 0; i < 4; i++) {
-    //   SwerveModule<TalonFX, TalonFX, CANcoder> module = drivetrain.getModule(i);
-    //   String name =
-    //       i == 0 ? "frontleft" : i == 1 ? "frontright" : i == 2 ? "backleft" : "backright";
-
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/CANcoder/position",
-    //       module.getEncoder().getPosition().getValueAsDouble());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/CANcoder/absolutePosition",
-    //       module.getEncoder().getAbsolutePosition().getValueAsDouble());
-    //   SmartDashboard.putBoolean(
-    //       getName() + "/modules/" + name + "/CANcoder/isConnected",
-    //       module.getEncoder().isConnected());
-    //   SmartDashboard.putBoolean(
-    //       getName() + "/modules/" + name + "/DriveMotor/isConnected",
-    //       module.getDriveMotor().isConnected());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/DriveMotor/acceleration",
-    //       module.getDriveMotor().getAcceleration().getValueAsDouble());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/DriveMotor/voltage",
-    //       module.getDriveMotor().getMotorVoltage().getValueAsDouble());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/DriveMotor/velocity",
-    //       module.getDriveMotor().getVelocity().getValueAsDouble());
-    //   SmartDashboard.putBoolean(
-    //       getName() + "/modules/" + name + "/SteerMotor/isConnected",
-    //       module.getDriveMotor().isConnected());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/SteerMotor/acceleration",
-    //       module.getSteerMotor().getAcceleration().getValueAsDouble());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/SteerMotor/voltage",
-    //       module.getSteerMotor().getMotorVoltage().getValueAsDouble());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/SteerMotor/velocity",
-    //       module.getSteerMotor().getVelocity().getValueAsDouble());
-    //   SmartDashboard.putNumber(
-    //       getName() + "/modules/" + name + "/SteerMotor/position",
-    //       module.getSteerMotor().getPosition().getValueAsDouble());
-    // }
+    Logger.processInputs("Drive/Modules/frontleft", moduleInputs[0]);
+    Logger.processInputs("Drive/Modules/frontright", moduleInputs[1]);
+    Logger.processInputs("Drive/Modules/backleft", moduleInputs[2]);
+    Logger.processInputs("Drive/Modules/backright", moduleInputs[3]);
   }
 
   @Override

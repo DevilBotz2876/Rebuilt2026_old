@@ -128,9 +128,6 @@ public class DriveIO {
       // moduleInput.steerMotorStallCurrentAmps =
       // module.getSteerMotor().getMotorStallCurrent().getValueAsDouble();
     }
-    if (!Robot.isSimulation()) {
-      // inputs.currentAcceleration = drivetrain.getState().Speeds..getAccel().get();
-    }
   }
   // Other methods for controlling the drive subsystem...
 }

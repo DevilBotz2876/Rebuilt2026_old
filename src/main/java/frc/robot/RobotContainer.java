@@ -39,9 +39,8 @@ public class RobotContainer {
     RobotConfig robotConfig = new RobotConfig();
     String robotName = simulationProperties.getProperty("robot.name", "UNKNOWN");
     String robotDrive = simulationProperties.getProperty("robot.drive", "UNKNOWN");
-    String driveConfigPath = simulationProperties.getProperty("robot.drive.configPath", "UNKNOWN");
 
-    System.out.println(robotName + ", " + robotDrive + ", " + driveConfigPath);
+    // System.out.println(robotName + ", " + robotDrive);
 
     if (robotDrive.equals("ctre")) {
       robotConfig.drive = new DriveSwerveCTRE(new TunerConstants(simulationProperties));
