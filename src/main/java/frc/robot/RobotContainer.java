@@ -46,7 +46,7 @@ public class RobotContainer {
 
     if (robotDrive.equals("yagsl")) {
       robotConfig.drive = new DriveSwerveYAGSL(driveConfigPath);
-    } else if(robotDrive.equals("ctre")) {
+    } else if (robotDrive.equals("ctre")) {
       robotConfig.drive = new DriveSwerveCTRE(new TunerConstants(simulationProperties));
     }
 

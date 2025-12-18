@@ -41,8 +41,7 @@ public class DriveSwerveCTRE extends DriveBase {
     super("CTRE");
     drivetrain = tunerConstants.createDrivetrain();
     MaxSpeed =
-      tunerConstants.kSpeedAt12Volts.in(
-            MetersPerSecond); // kSpeedAt12Volts desired top speed
+        tunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     MaxAngularRate =
         RotationsPerSecond.of(0.75)
             .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -67,8 +66,8 @@ public class DriveSwerveCTRE extends DriveBase {
     if (fieldOrientedDrive) {
       drivetrain.setControl(
           driveFieldCentric
-              .withVelocityX(velocity.vxMetersPerSecond) 
-              .withVelocityY(velocity.vyMetersPerSecond) 
+              .withVelocityX(velocity.vxMetersPerSecond)
+              .withVelocityY(velocity.vyMetersPerSecond)
               .withRotationalRate(velocity.omegaRadiansPerSecond));
     } else {
       drivetrain.setControl(
@@ -136,48 +135,51 @@ public class DriveSwerveCTRE extends DriveBase {
     io.updateInputs(inputs, drivetrain);
     Logger.processInputs("Drive", inputs);
 
-    for (int i = 0; i < 4; i++) {
-      SwerveModule<TalonFX, TalonFX, CANcoder> module = drivetrain.getModule(i);
-      String name =
-          i == 0 ? "frontleft" : i == 1 ? "frontright" : i == 2 ? "backleft" : "backright";
 
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/CANcoder/position",
-          module.getEncoder().getPosition().getValueAsDouble());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/CANcoder/absolutePosition",
-          module.getEncoder().getAbsolutePosition().getValueAsDouble());
-      SmartDashboard.putBoolean(
-          getName() + "/modules/" + name + "/CANcoder/isConnected",
-          module.getEncoder().isConnected());
-      SmartDashboard.putBoolean(
-          getName() + "/modules/" + name + "/DriveMotor/isConnected",
-          module.getDriveMotor().isConnected());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/DriveMotor/acceleration",
-          module.getDriveMotor().getAcceleration().getValueAsDouble());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/DriveMotor/voltage",
-          module.getDriveMotor().getMotorVoltage().getValueAsDouble());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/DriveMotor/velocity",
-          module.getDriveMotor().getVelocity().getValueAsDouble());
-      SmartDashboard.putBoolean(
-          getName() + "/modules/" + name + "/SteerMotor/isConnected",
-          module.getDriveMotor().isConnected());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/SteerMotor/acceleration",
-          module.getSteerMotor().getAcceleration().getValueAsDouble());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/SteerMotor/voltage",
-          module.getSteerMotor().getMotorVoltage().getValueAsDouble());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/SteerMotor/velocity",
-          module.getSteerMotor().getVelocity().getValueAsDouble());
-      SmartDashboard.putNumber(
-          getName() + "/modules/" + name + "/SteerMotor/position",
-          module.getSteerMotor().getPosition().getValueAsDouble());
-    }
+    // smartdashboard module info
+
+    // for (int i = 0; i < 4; i++) {
+    //   SwerveModule<TalonFX, TalonFX, CANcoder> module = drivetrain.getModule(i);
+    //   String name =
+    //       i == 0 ? "frontleft" : i == 1 ? "frontright" : i == 2 ? "backleft" : "backright";
+
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/CANcoder/position",
+    //       module.getEncoder().getPosition().getValueAsDouble());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/CANcoder/absolutePosition",
+    //       module.getEncoder().getAbsolutePosition().getValueAsDouble());
+    //   SmartDashboard.putBoolean(
+    //       getName() + "/modules/" + name + "/CANcoder/isConnected",
+    //       module.getEncoder().isConnected());
+    //   SmartDashboard.putBoolean(
+    //       getName() + "/modules/" + name + "/DriveMotor/isConnected",
+    //       module.getDriveMotor().isConnected());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/DriveMotor/acceleration",
+    //       module.getDriveMotor().getAcceleration().getValueAsDouble());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/DriveMotor/voltage",
+    //       module.getDriveMotor().getMotorVoltage().getValueAsDouble());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/DriveMotor/velocity",
+    //       module.getDriveMotor().getVelocity().getValueAsDouble());
+    //   SmartDashboard.putBoolean(
+    //       getName() + "/modules/" + name + "/SteerMotor/isConnected",
+    //       module.getDriveMotor().isConnected());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/SteerMotor/acceleration",
+    //       module.getSteerMotor().getAcceleration().getValueAsDouble());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/SteerMotor/voltage",
+    //       module.getSteerMotor().getMotorVoltage().getValueAsDouble());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/SteerMotor/velocity",
+    //       module.getSteerMotor().getVelocity().getValueAsDouble());
+    //   SmartDashboard.putNumber(
+    //       getName() + "/modules/" + name + "/SteerMotor/position",
+    //       module.getSteerMotor().getPosition().getValueAsDouble());
+    // }
   }
 
   @Override
