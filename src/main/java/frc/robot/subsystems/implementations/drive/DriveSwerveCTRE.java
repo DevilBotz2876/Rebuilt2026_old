@@ -2,9 +2,6 @@ package frc.robot.subsystems.implementations.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
@@ -12,10 +9,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstants;
 import frc.robot.io.interfaces.DriveIO;
 import frc.robot.io.interfaces.DriveIOInputsAutoLogged;
+import frc.robot.io.interfaces.ModuleIOInputsAutoLogged;
 import frc.robot.subsystems.implementations.drive.generated.CommandSwerveDrivetrain;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -36,6 +33,12 @@ public class DriveSwerveCTRE extends DriveBase {
 
   DriveIO io = new DriveIO();
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
+  private final ModuleIOInputsAutoLogged[] moduleInputs = {
+    new ModuleIOInputsAutoLogged(),
+    new ModuleIOInputsAutoLogged(),
+    new ModuleIOInputsAutoLogged(),
+    new ModuleIOInputsAutoLogged()
+  };
 
   public DriveSwerveCTRE(TunerConstants tunerConstants) {
     super("CTRE");
@@ -132,9 +135,12 @@ public class DriveSwerveCTRE extends DriveBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs, drivetrain);
+    io.updateInputs(inputs, moduleInputs, drivetrain);
     Logger.processInputs("Drive", inputs);
-
+    Logger.processInputs("Drive/Module/frontleft", moduleInputs[0]);
+    Logger.processInputs("Drive/Module/frontright", moduleInputs[1]);
+    Logger.processInputs("Drive/Module/backleft", moduleInputs[2]);
+    Logger.processInputs("Drive/Module/backright", moduleInputs[3]);
 
     // smartdashboard module info
 
