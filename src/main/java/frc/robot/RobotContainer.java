@@ -35,11 +35,12 @@ public class RobotContainer {
       System.out.println(e);
     }
 
-    RobotConfig robotConfig = new RobotConfig();
+    
     String robotName = simulationProperties.getProperty("robot.name", "UNKNOWN");
     String robotDrive = simulationProperties.getProperty("robot.drive", "UNKNOWN");
     String driveConfigPath = simulationProperties.getProperty("robot.drive.configPath", "UNKNOWN");
 
+    RobotConfig robotConfig = new RobotConfig(simulationProperties);
     // System.out.println(robotName + ", " + robotDrive + ", " + driveConfigPath);
 
     if (robotDrive.equals("yagsl")) {
