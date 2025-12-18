@@ -24,12 +24,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Load robot name from configuration file
     // Check if the robot is running in simulation
-    Properties simulationProperties = new Properties();
+    Properties robotProperties = new Properties();
 
     // get configuration from robot_config.properties
     try {
       FileReader propertiesFile = new FileReader("src/main/deploy/robot_config.properties");
-      simulationProperties.load(propertiesFile);
+      robotProperties.load(propertiesFile);
       // System.out.println(simulationProperties.toString());
       propertiesFile.close();
     } catch (Exception e) {
@@ -37,13 +37,13 @@ public class RobotContainer {
     }
 
     RobotConfig robotConfig = new RobotConfig();
-    String robotName = simulationProperties.getProperty("robot.name", "UNKNOWN");
-    String robotDrive = simulationProperties.getProperty("robot.drive", "UNKNOWN");
+    String robotName = robotProperties.getProperty("robot.name", "UNKNOWN");
+    String robotDrive = robotProperties.getProperty("robot.drive", "UNKNOWN");
 
     // System.out.println(robotName + ", " + robotDrive);
 
     if (robotDrive.equals("ctre")) {
-      robotConfig.drive = new DriveSwerveCTRE(new TunerConstants(simulationProperties));
+      robotConfig.drive = new DriveSwerveCTRE(new TunerConstants(robotProperties));
     }
 
     if (Robot.isSimulation()) {
@@ -51,7 +51,7 @@ public class RobotContainer {
     }
 
     try (FileInputStream input = new FileInputStream("simulation.properties")) {
-      simulationProperties.load(input);
+      robotProperties.load(input);
     } catch (IOException e) {
       System.err.println("Failed to load simulation configuration file: " + e.getMessage());
       System.exit(1);

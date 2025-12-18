@@ -38,7 +38,7 @@ public class TunerConstants {
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       BackRight;
 
-  public TunerConstants(Properties simulationProperties) {
+  public TunerConstants(Properties robotProperties) {
     // Both sets of gains need to be tuned to your individual robot.
 
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
@@ -47,68 +47,68 @@ public class TunerConstants {
     final Slot0Configs steerGains =
         new Slot0Configs()
             .withKP(
-                Double.parseDouble(simulationProperties.getProperty("ctre.steerGains.kp", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kp", "0.0")))
             .withKI(
-                Double.parseDouble(simulationProperties.getProperty("ctre.steerGains.ki", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ki", "0.0")))
             .withKD(
-                Double.parseDouble(simulationProperties.getProperty("ctre.steerGains.kd", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kd", "0.0")))
             .withKS(
-                Double.parseDouble(simulationProperties.getProperty("ctre.steerGains.ks", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ks", "0.0")))
             .withKV(
-                Double.parseDouble(simulationProperties.getProperty("ctre.steerGains.kv", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kv", "0.0")))
             .withKA(
-                Double.parseDouble(simulationProperties.getProperty("ctre.steerGains.ka", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ka", "0.0")))
             .withStaticFeedforwardSign(
                 StaticFeedforwardSignValue.valueOf(
-                    simulationProperties.getProperty(
+                    robotProperties.getProperty(
                         "ctre.steerGains.staticFeedforwardSign", "UNKNOWN")));
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     final Slot0Configs driveGains =
         new Slot0Configs()
             .withKP(
-                Double.parseDouble(simulationProperties.getProperty("ctre.driveGains.kp", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kp", "0.0")))
             .withKI(
-                Double.parseDouble(simulationProperties.getProperty("ctre.driveGains.ki", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.ki", "0.0")))
             .withKD(
-                Double.parseDouble(simulationProperties.getProperty("ctre.driveGains.kd", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kd", "0.0")))
             .withKS(
-                Double.parseDouble(simulationProperties.getProperty("ctre.driveGains.ks", "0.0")))
+                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.ks", "0.0")))
             .withKV(
-                Double.parseDouble(simulationProperties.getProperty("ctre.driveGains.kv", "0.0")));
+                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kv", "0.0")));
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
     final ClosedLoopOutputType kSteerClosedLoopOutput =
         ClosedLoopOutputType.valueOf(
-            simulationProperties.getProperty("ctre.steerClosedLoopOutput", "UNKNOWN"));
+            robotProperties.getProperty("ctre.steerClosedLoopOutput", "UNKNOWN"));
     // The closed-loop output type to use for the drive motors;
     // This affects the PID/FF gains for the drive motors
     final ClosedLoopOutputType kDriveClosedLoopOutput =
         ClosedLoopOutputType.valueOf(
-            simulationProperties.getProperty("ctre.driveClosedLoopOutput", "UNKNOWN"));
+            robotProperties.getProperty("ctre.driveClosedLoopOutput", "UNKNOWN"));
 
     // The type of motor used for the drive motor
     final DriveMotorArrangement kDriveMotorType =
         DriveMotorArrangement.valueOf(
-            simulationProperties.getProperty("ctre.driveMotorType", "TalonFX_Integrated"));
+            robotProperties.getProperty("ctre.driveMotorType", "TalonFX_Integrated"));
     // The type of motor used for the drive motor
     final SteerMotorArrangement kSteerMotorType =
         SteerMotorArrangement.valueOf(
-            simulationProperties.getProperty("ctre.steerMotorType", "TalonFX_Integrated"));
+            robotProperties.getProperty("ctre.steerMotorType", "TalonFX_Integrated"));
 
     // The remote sensor feedback type to use for the steer motors;
     // When not Pro-licensed, Fused*/Sync* automatically fall back to Remote*
     final SteerFeedbackType kSteerFeedbackType =
         SteerFeedbackType.valueOf(
-            simulationProperties.getProperty("ctre.steerFeedbackType", "UNKNOWN"));
+            robotProperties.getProperty("ctre.steerFeedbackType", "UNKNOWN"));
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
     final Current kSlipCurrent =
         Amps.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.slipCurrentInAmps", "120.0")));
+                robotProperties.getProperty("ctre.slipCurrentInAmps", "120.0")));
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -124,7 +124,7 @@ public class TunerConstants {
                     .withStatorCurrentLimit(
                         Amps.of(
                             Double.parseDouble(
-                                simulationProperties.getProperty(
+                                robotProperties.getProperty(
                                     "ctre.steerStatorCurrentLimitInAmps", "60.0"))))
                     .withStatorCurrentLimitEnable(true));
     final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
@@ -135,60 +135,60 @@ public class TunerConstants {
     // All swerve devices must share the same CAN bus
     kCANBus =
         new CANBus(
-            simulationProperties.getProperty("ctre.canbus.name", ""),
-            simulationProperties.getProperty("ctre.canbus.hootFilePath", "./logs/example.hoot"));
+            robotProperties.getProperty("ctre.canbus.name", ""),
+            robotProperties.getProperty("ctre.canbus.hootFilePath", "./logs/example.hoot"));
 
     // Theoretical free speed (m/s) at 12 V applied output;
     // This needs to be tuned to your individual robot
     kSpeedAt12Volts =
         MetersPerSecond.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.speedAt12VoltsInMetersPerSecond", "5.03")));
+                robotProperties.getProperty("ctre.speedAt12VoltsInMetersPerSecond", "5.03")));
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     final double kCoupleRatio =
         Double.parseDouble(
-            simulationProperties.getProperty("ctre.coupleRatio", "3.5714285714285716"));
+            robotProperties.getProperty("ctre.coupleRatio", "3.5714285714285716"));
 
     final double kDriveGearRatio =
         Double.parseDouble(
-            simulationProperties.getProperty("ctre.driveGearRatio", "6.746031746031747"));
+            robotProperties.getProperty("ctre.driveGearRatio", "6.746031746031747"));
     final double kSteerGearRatio =
         Double.parseDouble(
-            simulationProperties.getProperty("ctre.steerGearRatio", "21.428571428571427"));
+            robotProperties.getProperty("ctre.steerGearRatio", "21.428571428571427"));
     final Distance kWheelRadius =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.wheelRadiusInInches", "1.125")));
+                robotProperties.getProperty("ctre.wheelRadiusInInches", "1.125")));
 
     final boolean kInvertLeftSide =
-        Boolean.parseBoolean(simulationProperties.getProperty("ctre.invertLeftSide", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.invertLeftSide", "false"));
     final boolean kInvertRightSide =
-        Boolean.parseBoolean(simulationProperties.getProperty("ctre.invertRightSide", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.invertRightSide", "false"));
 
-    final int kPigeonId = Integer.parseInt(simulationProperties.getProperty("ctre.pigeonId", "0"));
+    final int kPigeonId = Integer.parseInt(robotProperties.getProperty("ctre.pigeonId", "0"));
 
     // These are only used for simulation
     final MomentOfInertia kSteerInertia =
         KilogramSquareMeters.of(
             Double.parseDouble(
-                simulationProperties.getProperty(
+                robotProperties.getProperty(
                     "ctre.steerInertiaInKilogramSquareMeters", "0.01")));
     final MomentOfInertia kDriveInertia =
         KilogramSquareMeters.of(
             Double.parseDouble(
-                simulationProperties.getProperty(
+                robotProperties.getProperty(
                     "ctre.driveInertiaInKilogramSquareMeters", "0.01")));
     // Simulated voltage necessary to overcome friction
     final Voltage kSteerFrictionVoltage =
         Volts.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.steerFrictionVoltage", "0.2")));
+                robotProperties.getProperty("ctre.steerFrictionVoltage", "0.2")));
     final Voltage kDriveFrictionVoltage =
         Volts.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.driveFrictionVoltage", "0.2")));
+                robotProperties.getProperty("ctre.driveFrictionVoltage", "0.2")));
 
     DrivetrainConstants =
         new SwerveDrivetrainConstants()
@@ -224,117 +224,117 @@ public class TunerConstants {
 
     // Front Left
     final int kFrontLeftDriveMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.frontLeft.driveMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.frontLeft.driveMotorId", "0"));
     final int kFrontLeftSteerMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.frontLeft.steerMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.frontLeft.steerMotorId", "0"));
     final int kFrontLeftEncoderId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.frontLeft.encoderId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.frontLeft.encoderId", "0"));
     final Angle kFrontLeftEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                simulationProperties.getProperty(
+                robotProperties.getProperty(
                     "ctre.frontLeft.encoderOffsetInRotations", "0.0")));
     final boolean kFrontLeftSteerMotorInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.frontLeft.steerInverted", "false"));
+            robotProperties.getProperty("ctre.frontLeft.steerInverted", "false"));
     final boolean kFrontLeftEncoderInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.frontLeft.encoderInverted", "false"));
+            robotProperties.getProperty("ctre.frontLeft.encoderInverted", "false"));
     ;
 
     final Distance kFrontLeftXPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.frontLeft.xPosInInches", "12.0")));
+                robotProperties.getProperty("ctre.frontLeft.xPosInInches", "12.0")));
     final Distance kFrontLeftYPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.frontLeft.yPosInInches", "12.0")));
+                robotProperties.getProperty("ctre.frontLeft.yPosInInches", "12.0")));
 
     // Front Right
     final int kFrontRightDriveMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.frontRight.driveMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.frontRight.driveMotorId", "0"));
     final int kFrontRightSteerMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.frontRight.steerMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.frontRight.steerMotorId", "0"));
     final int kFrontRightEncoderId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.frontRight.encoderId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.frontRight.encoderId", "0"));
     final Angle kFrontRightEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                simulationProperties.getProperty(
+                robotProperties.getProperty(
                     "ctre.frontRight.encoderOffsetInRotations", "0.0")));
     final boolean kFrontRightSteerMotorInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.frontRight.steerInverted", "false"));
+            robotProperties.getProperty("ctre.frontRight.steerInverted", "false"));
     final boolean kFrontRightEncoderInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.frontRight.encoderInverted", "false"));
+            robotProperties.getProperty("ctre.frontRight.encoderInverted", "false"));
 
     final Distance kFrontRightXPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.frontRight.xPosInInches", "12.0")));
+                robotProperties.getProperty("ctre.frontRight.xPosInInches", "12.0")));
     final Distance kFrontRightYPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.frontRight.yPosInInches", "-12.0")));
+                robotProperties.getProperty("ctre.frontRight.yPosInInches", "-12.0")));
 
     // Back Left
     final int kBackLeftDriveMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.backLeft.driveMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.backLeft.driveMotorId", "0"));
     final int kBackLeftSteerMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.backLeft.steerMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.backLeft.steerMotorId", "0"));
     final int kBackLeftEncoderId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.backLeft.encoderId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.backLeft.encoderId", "0"));
     final Angle kBackLeftEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.backLeft.encoderOffsetInRotations", "0.0")));
+                robotProperties.getProperty("ctre.backLeft.encoderOffsetInRotations", "0.0")));
     final boolean kBackLeftSteerMotorInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.backLeft.steerInverted", "false"));
+            robotProperties.getProperty("ctre.backLeft.steerInverted", "false"));
     final boolean kBackLeftEncoderInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.backLeft.encoderInverted", "false"));
+            robotProperties.getProperty("ctre.backLeft.encoderInverted", "false"));
 
     final Distance kBackLeftXPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.backLeft.xPosInInches", "-12.0")));
+                robotProperties.getProperty("ctre.backLeft.xPosInInches", "-12.0")));
     final Distance kBackLeftYPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.backLeft.yPosInInches", "12.0")));
+                robotProperties.getProperty("ctre.backLeft.yPosInInches", "12.0")));
 
     // Back Right
     final int kBackRightDriveMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.backRight.driveMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.backRight.driveMotorId", "0"));
     final int kBackRightSteerMotorId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.backRight.steerMotorId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.backRight.steerMotorId", "0"));
     final int kBackRightEncoderId =
-        Integer.parseInt(simulationProperties.getProperty("ctre.backRight.encoderId", "0"));
+        Integer.parseInt(robotProperties.getProperty("ctre.backRight.encoderId", "0"));
     final Angle kBackRightEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                simulationProperties.getProperty(
+                robotProperties.getProperty(
                     "ctre.backRight.encoderOffsetInRotations", "0.0")));
     final boolean kBackRightSteerMotorInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.backRight.steerInverted", "false"));
+            robotProperties.getProperty("ctre.backRight.steerInverted", "false"));
     ;
     final boolean kBackRightEncoderInverted =
         Boolean.parseBoolean(
-            simulationProperties.getProperty("ctre.backRight.encoderInverted", "false"));
+            robotProperties.getProperty("ctre.backRight.encoderInverted", "false"));
     ;
 
     final Distance kBackRightXPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.backRight.xPosInInches", "-12.0")));
+                robotProperties.getProperty("ctre.backRight.xPosInInches", "-12.0")));
     final Distance kBackRightYPos =
         Inches.of(
             Double.parseDouble(
-                simulationProperties.getProperty("ctre.backRight.yPosInInches", "-12.0")));
+                robotProperties.getProperty("ctre.backRight.yPosInInches", "-12.0")));
 
     FrontLeft =
         ConstantCreator.createModuleConstants(
