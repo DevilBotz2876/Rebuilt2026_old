@@ -46,18 +46,12 @@ public class TunerConstants {
 
     final Slot0Configs steerGains =
         new Slot0Configs()
-            .withKP(
-                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kp", "0.0")))
-            .withKI(
-                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ki", "0.0")))
-            .withKD(
-                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kd", "0.0")))
-            .withKS(
-                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ks", "0.0")))
-            .withKV(
-                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kv", "0.0")))
-            .withKA(
-                Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ka", "0.0")))
+            .withKP(Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kp", "0.0")))
+            .withKI(Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ki", "0.0")))
+            .withKD(Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kd", "0.0")))
+            .withKS(Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ks", "0.0")))
+            .withKV(Double.parseDouble(robotProperties.getProperty("ctre.steerGains.kv", "0.0")))
+            .withKA(Double.parseDouble(robotProperties.getProperty("ctre.steerGains.ka", "0.0")))
             .withStaticFeedforwardSign(
                 StaticFeedforwardSignValue.valueOf(
                     robotProperties.getProperty(
@@ -66,16 +60,11 @@ public class TunerConstants {
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     final Slot0Configs driveGains =
         new Slot0Configs()
-            .withKP(
-                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kp", "0.0")))
-            .withKI(
-                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.ki", "0.0")))
-            .withKD(
-                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kd", "0.0")))
-            .withKS(
-                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.ks", "0.0")))
-            .withKV(
-                Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kv", "0.0")));
+            .withKP(Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kp", "0.0")))
+            .withKI(Double.parseDouble(robotProperties.getProperty("ctre.driveGains.ki", "0.0")))
+            .withKD(Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kd", "0.0")))
+            .withKS(Double.parseDouble(robotProperties.getProperty("ctre.driveGains.ks", "0.0")))
+            .withKV(Double.parseDouble(robotProperties.getProperty("ctre.driveGains.kv", "0.0")));
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -100,15 +89,12 @@ public class TunerConstants {
     // The remote sensor feedback type to use for the steer motors;
     // When not Pro-licensed, Fused*/Sync* automatically fall back to Remote*
     final SteerFeedbackType kSteerFeedbackType =
-        SteerFeedbackType.valueOf(
-            robotProperties.getProperty("ctre.steerFeedbackType", "UNKNOWN"));
+        SteerFeedbackType.valueOf(robotProperties.getProperty("ctre.steerFeedbackType", "UNKNOWN"));
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
     final Current kSlipCurrent =
-        Amps.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.slipCurrentInAmps", "120.0")));
+        Amps.of(Double.parseDouble(robotProperties.getProperty("ctre.slipCurrentInAmps", "120.0")));
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -148,19 +134,16 @@ public class TunerConstants {
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     final double kCoupleRatio =
-        Double.parseDouble(
-            robotProperties.getProperty("ctre.coupleRatio", "3.5714285714285716"));
+        Double.parseDouble(robotProperties.getProperty("ctre.coupleRatio", "3.5714285714285716"));
 
     final double kDriveGearRatio =
-        Double.parseDouble(
-            robotProperties.getProperty("ctre.driveGearRatio", "6.746031746031747"));
+        Double.parseDouble(robotProperties.getProperty("ctre.driveGearRatio", "6.746031746031747"));
     final double kSteerGearRatio =
         Double.parseDouble(
             robotProperties.getProperty("ctre.steerGearRatio", "21.428571428571427"));
     final Distance kWheelRadius =
         Inches.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.wheelRadiusInInches", "1.125")));
+            Double.parseDouble(robotProperties.getProperty("ctre.wheelRadiusInInches", "1.125")));
 
     final boolean kInvertLeftSide =
         Boolean.parseBoolean(robotProperties.getProperty("ctre.invertLeftSide", "false"));
@@ -173,22 +156,18 @@ public class TunerConstants {
     final MomentOfInertia kSteerInertia =
         KilogramSquareMeters.of(
             Double.parseDouble(
-                robotProperties.getProperty(
-                    "ctre.steerInertiaInKilogramSquareMeters", "0.01")));
+                robotProperties.getProperty("ctre.steerInertiaInKilogramSquareMeters", "0.01")));
     final MomentOfInertia kDriveInertia =
         KilogramSquareMeters.of(
             Double.parseDouble(
-                robotProperties.getProperty(
-                    "ctre.driveInertiaInKilogramSquareMeters", "0.01")));
+                robotProperties.getProperty("ctre.driveInertiaInKilogramSquareMeters", "0.01")));
     // Simulated voltage necessary to overcome friction
     final Voltage kSteerFrictionVoltage =
         Volts.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.steerFrictionVoltage", "0.2")));
+            Double.parseDouble(robotProperties.getProperty("ctre.steerFrictionVoltage", "0.2")));
     final Voltage kDriveFrictionVoltage =
         Volts.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.driveFrictionVoltage", "0.2")));
+            Double.parseDouble(robotProperties.getProperty("ctre.driveFrictionVoltage", "0.2")));
 
     DrivetrainConstants =
         new SwerveDrivetrainConstants()
@@ -232,11 +211,9 @@ public class TunerConstants {
     final Angle kFrontLeftEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                robotProperties.getProperty(
-                    "ctre.frontLeft.encoderOffsetInRotations", "0.0")));
+                robotProperties.getProperty("ctre.frontLeft.encoderOffsetInRotations", "0.0")));
     final boolean kFrontLeftSteerMotorInverted =
-        Boolean.parseBoolean(
-            robotProperties.getProperty("ctre.frontLeft.steerInverted", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.frontLeft.steerInverted", "false"));
     final boolean kFrontLeftEncoderInverted =
         Boolean.parseBoolean(
             robotProperties.getProperty("ctre.frontLeft.encoderInverted", "false"));
@@ -244,12 +221,10 @@ public class TunerConstants {
 
     final Distance kFrontLeftXPos =
         Inches.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.frontLeft.xPosInInches", "12.0")));
+            Double.parseDouble(robotProperties.getProperty("ctre.frontLeft.xPosInInches", "12.0")));
     final Distance kFrontLeftYPos =
         Inches.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.frontLeft.yPosInInches", "12.0")));
+            Double.parseDouble(robotProperties.getProperty("ctre.frontLeft.yPosInInches", "12.0")));
 
     // Front Right
     final int kFrontRightDriveMotorId =
@@ -261,11 +236,9 @@ public class TunerConstants {
     final Angle kFrontRightEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                robotProperties.getProperty(
-                    "ctre.frontRight.encoderOffsetInRotations", "0.0")));
+                robotProperties.getProperty("ctre.frontRight.encoderOffsetInRotations", "0.0")));
     final boolean kFrontRightSteerMotorInverted =
-        Boolean.parseBoolean(
-            robotProperties.getProperty("ctre.frontRight.steerInverted", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.frontRight.steerInverted", "false"));
     final boolean kFrontRightEncoderInverted =
         Boolean.parseBoolean(
             robotProperties.getProperty("ctre.frontRight.encoderInverted", "false"));
@@ -291,20 +264,16 @@ public class TunerConstants {
             Double.parseDouble(
                 robotProperties.getProperty("ctre.backLeft.encoderOffsetInRotations", "0.0")));
     final boolean kBackLeftSteerMotorInverted =
-        Boolean.parseBoolean(
-            robotProperties.getProperty("ctre.backLeft.steerInverted", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.backLeft.steerInverted", "false"));
     final boolean kBackLeftEncoderInverted =
-        Boolean.parseBoolean(
-            robotProperties.getProperty("ctre.backLeft.encoderInverted", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.backLeft.encoderInverted", "false"));
 
     final Distance kBackLeftXPos =
         Inches.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.backLeft.xPosInInches", "-12.0")));
+            Double.parseDouble(robotProperties.getProperty("ctre.backLeft.xPosInInches", "-12.0")));
     final Distance kBackLeftYPos =
         Inches.of(
-            Double.parseDouble(
-                robotProperties.getProperty("ctre.backLeft.yPosInInches", "12.0")));
+            Double.parseDouble(robotProperties.getProperty("ctre.backLeft.yPosInInches", "12.0")));
 
     // Back Right
     final int kBackRightDriveMotorId =
@@ -316,11 +285,9 @@ public class TunerConstants {
     final Angle kBackRightEncoderOffset =
         Rotations.of(
             Double.parseDouble(
-                robotProperties.getProperty(
-                    "ctre.backRight.encoderOffsetInRotations", "0.0")));
+                robotProperties.getProperty("ctre.backRight.encoderOffsetInRotations", "0.0")));
     final boolean kBackRightSteerMotorInverted =
-        Boolean.parseBoolean(
-            robotProperties.getProperty("ctre.backRight.steerInverted", "false"));
+        Boolean.parseBoolean(robotProperties.getProperty("ctre.backRight.steerInverted", "false"));
     ;
     final boolean kBackRightEncoderInverted =
         Boolean.parseBoolean(
