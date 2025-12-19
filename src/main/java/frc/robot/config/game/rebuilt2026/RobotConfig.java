@@ -21,6 +21,7 @@ import frc.robot.io.implementations.motor.MotorIOBase.MotorIOBaseSettings;
 import frc.robot.io.implementations.motor.MotorIOSparkMax.SparkMaxSettings;
 import frc.robot.io.implementations.motor.MotorIOTalonFx.TalonFxSettings;
 import frc.robot.subsystems.controls.arm.ArmControls;
+import frc.robot.subsystems.controls.drive.DriveControls;
 import frc.robot.subsystems.implementations.drive.DriveBase;
 import frc.robot.subsystems.implementations.motor.ArmMotorSubsystem;
 import frc.robot.subsystems.interfaces.SimpleMotor;
@@ -65,7 +66,7 @@ public class RobotConfig {
       // HACK just to verify autos are visible without connecting to robot
       // this.autoChooser = AutoBuilder.buildAutoChooser("Sit Still");
     }
-
+    // DriveControls.setupController(drive, mainController);
     // Send vision-based odometry measurements to drive's odometry calculations
     // vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
     ArmControls.setupController(arm, mainController);
