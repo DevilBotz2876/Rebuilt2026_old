@@ -48,7 +48,7 @@ public class RobotContainer {
     }
 
     if (Robot.isSimulation()) {
-      robotConfig.drive.setPose(new Pose2d(new Translation2d(1, 1), new Rotation2d()));
+      // robotConfig.drive.setPose(new Pose2d(new Translation2d(1, 1), new Rotation2d()));
     }
 
     try (FileInputStream input = new FileInputStream("simulation.properties")) {
@@ -66,7 +66,7 @@ public class RobotContainer {
         new Elastic.Notification()
             .withDescription("Loading Settings for Robot Name = " + robotName));
 
-    // robotConfig.configureBindings();
+    robotConfig.configureBindings();
   }
 
   public Command getAutonomousCommand() {
