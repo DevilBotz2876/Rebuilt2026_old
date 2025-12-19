@@ -31,16 +31,23 @@ The code uses Java WPILib and the [WPILib command-based](https://docs.wpilib.org
     1. Login to GitHub Account (if prompted)
     1. Repo: https://github.com/DevilBotz2876/XxxYYYY (where Xxx is the name of the FRC game and YYYY is the year E.g. "Rebuilt2026")
       * Note: The initial compilation will take a while because of all the dependencies that need to be downloaded. If all works well, in the Terminal view at the bottom, you should see:
+1. Building the code
+   1. "Ctrl-Shift-B" or "Command-Shift-B" --> "Build DevilBotz Robot"
+   1. Enter the name of the profile from src/main/resources you would like to build with (e.g. to use "ctre-example.properties", enter "ctre-example")
 1. Simulating the Code
    1. Starting a Simulation
+      * "Ctrl-Shift-P" or "Command-Shift-P"
+      * "WPILib: Simulate Robot Code"
+      * "simulateJava"
+      <!-- Unsure how to get below to work with profiles
       * "F5" starts the simulation
          * Alternate Steps:
             * "Ctrl-Shift-P" or "Command-Shift-P"
             * "Simulate Robot Code"
       * Enable: "Sim GUI"
          * If you get the following error: "cannot find frc.robot.main", then:
-            * "Ctrl-Shift-P" --> "Clean Language Server Workspace"
-      * Optional: Enable DriverStation to better mimic real world usage
+            * "Ctrl-Shift-P" -> "Clean Language Server Workspace"
+      * Optional: Enable DriverStation to better mimic real world usage -->
    1. Robot Simulation (aka Sim GUI) Overview
       1. Configure XBox Controller
          1. Make sure joystick is in "X-Box Mode". Plug in Joystick.
