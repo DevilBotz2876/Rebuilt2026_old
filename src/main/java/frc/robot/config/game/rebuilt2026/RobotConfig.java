@@ -1,12 +1,12 @@
 package frc.robot.config.game.rebuilt2026;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.subsystems.controls.drive.DriveControls;
 import frc.robot.subsystems.implementations.drive.DriveBase;
 
 /* Put all constants here with reasonable defaults */
@@ -45,9 +45,9 @@ public class RobotConfig {
       // TODO: Add VisionSubsystem Simulation Support
 
       // HACK just to verify autos are visible without connecting to robot
-      this.autoChooser = AutoBuilder.buildAutoChooser("Sit Still");
+      // this.autoChooser = AutoBuilder.buildAutoChooser("Sit Still");
     }
-
+    DriveControls.setupController(drive, mainController);
     // Send vision-based odometry measurements to drive's odometry calculations
     // vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
 

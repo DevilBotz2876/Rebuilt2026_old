@@ -10,7 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.config.game.rebuilt2026.*;
-import frc.robot.subsystems.implementations.drive.DriveSwerveYAGSL;
+import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstants;
+import frc.robot.subsystems.implementations.drive.DriveSwerveCTRE;
 import frc.robot.util.Elastic;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -23,12 +24,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Load robot name from configuration file
     // Check if the robot is running in simulation
-    Properties simulationProperties = new Properties();
+    Properties robotProperties = new Properties();
 
     // get configuration from robot_config.properties
     try {
       FileReader propertiesFile = new FileReader("src/main/deploy/robot_config.properties");
-      simulationProperties.load(propertiesFile);
+      robotProperties.load(propertiesFile);
       // System.out.println(simulationProperties.toString());
       propertiesFile.close();
     } catch (Exception e) {
@@ -36,14 +37,13 @@ public class RobotContainer {
     }
 
     RobotConfig robotConfig = new RobotConfig();
-    String robotName = simulationProperties.getProperty("robot.name", "UNKNOWN");
-    String robotDrive = simulationProperties.getProperty("robot.drive", "UNKNOWN");
-    String driveConfigPath = simulationProperties.getProperty("robot.drive.configPath", "UNKNOWN");
+    String robotName = robotProperties.getProperty("robot.name", "UNKNOWN");
+    String robotDrive = robotProperties.getProperty("robot.drive", "UNKNOWN");
 
-    // System.out.println(robotName + ", " + robotDrive + ", " + driveConfigPath);
+    // System.out.println(robotName + ", " + robotDrive);
 
-    if (robotDrive.equals("yagsl")) {
-      robotConfig.drive = new DriveSwerveYAGSL(driveConfigPath);
+    if (robotDrive.equals("ctre")) {
+      robotConfig.drive = new DriveSwerveCTRE(new TunerConstants(robotProperties));
     }
 
     if (Robot.isSimulation()) {
@@ -51,7 +51,7 @@ public class RobotContainer {
     }
 
     try (FileInputStream input = new FileInputStream("simulation.properties")) {
-      simulationProperties.load(input);
+      robotProperties.load(input);
     } catch (IOException e) {
       System.err.println("Failed to load simulation configuration file: " + e.getMessage());
       System.exit(1);
@@ -65,7 +65,7 @@ public class RobotContainer {
         new Elastic.Notification()
             .withDescription("Loading Settings for Robot Name = " + robotName));
 
-    // robotConfig.configureBindings();
+    robotConfig.configureBindings();
   }
 
   public Command getAutonomousCommand() {
