@@ -45,17 +45,17 @@ public class ArmControls {
         //       return 0.0;
         //     }));
 
-        // SmartDashboard.putData(
-        //   armSubsystem.getName() + "/Commands/Arm To -90", new ArmToPosition(arm, () -> -90));
-        // SmartDashboard.putData(
-        //   armSubsystem.getName() + "/Commands/Arm To -45", new ArmToPosition(arm, () -> -45));
-        // SmartDashboard.putData(
-        //   armSubsystem.getName() + "/Commands/Arm To 0", new ArmToPosition(arm, () -> 0));
-        // SmartDashboard.putData(
-        //   armSubsystem.getName() + "/Commands/Arm To 15", new ArmToPosition(arm, () -> 15));
-        // SmartDashboard.putData(
-        //   armSubsystem.getName() + "/Commands/Arm To 45", new ArmToPosition(arm, () -> 45));
-        // SmartDashboard.putData(
-        //   armSubsystem.getName() + "/Commands/Arm To 75", new ArmToPosition(arm, () -> 75));
+        SmartDashboard.putData(
+          armSubsystem.getName() + "/Commands/Arm To -90", new ArmToPosition(arm, () -> -90));
+        SmartDashboard.putData(
+          armSubsystem.getName() + "/Commands/Arm To -45", new ArmToPosition(arm, () -> -45));
+        SmartDashboard.putData(
+          armSubsystem.getName() + "/Commands/Arm To 0", new ArmToPosition(arm, () -> 0));
+        SmartDashboard.putData(
+          armSubsystem.getName() + "/Commands/Arm To 15", new ArmToPosition(arm, () -> 15));
+        SmartDashboard.putData(
+          armSubsystem.getName() + "/Commands/Arm To 45", new ArmToPosition(arm, () -> 45));
+        SmartDashboard.putData(
+          armSubsystem.getName() + "/Commands/Arm To 75", new ArmToPosition(arm, () -> 75));
   }
 }
