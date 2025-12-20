@@ -24,10 +24,10 @@ public class ElevatorControls {
     SubsystemBase subsystem = (SubsystemBase) elevator;
     subsystem.setDefaultCommand(
         // Override controller if new setupController. need to be fixed
-        new MotorBringUpCommand(
-        (Motor) elevator,
-        // new ElevatorCommand(
-        //     elevator,
+        // new MotorBringUpCommand(
+        // (Motor) elevator,
+        new ElevatorCommand(
+            elevator,
             () -> {
               if (controller.pov(0).getAsBoolean()) {
                 return 0.1;
