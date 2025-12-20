@@ -8,6 +8,7 @@ import frc.robot.commands.common.elevator.ElevatorCommand;
 import frc.robot.commands.common.elevator.ElevatorToPosition;
 import frc.robot.commands.common.motor.MotorAutoResetEncoderCommand;
 import frc.robot.commands.common.motor.MotorAutoResetEncoderCommand.MotorAutoResetEncoderSettings;
+import frc.robot.commands.common.motor.MotorBringUpCommand;
 import frc.robot.subsystems.interfaces.Elevator;
 import frc.robot.subsystems.interfaces.Motor;
 
@@ -23,10 +24,10 @@ public class ElevatorControls {
     SubsystemBase subsystem = (SubsystemBase) elevator;
     subsystem.setDefaultCommand(
         // Override controller if new setupController. need to be fixed
-        // new MotorBringUpCommand(
-        // (Motor) elevator,
-        new ElevatorCommand(
-            elevator,
+        new MotorBringUpCommand(
+        (Motor) elevator,
+        // new ElevatorCommand(
+        //     elevator,
             () -> {
               if (controller.pov(0).getAsBoolean()) {
                 return 0.1;

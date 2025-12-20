@@ -1,6 +1,7 @@
 package frc.robot.config.game.rebuilt2026;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,20 +13,27 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.io.implementations.motor.MotorIOArmStub;
 import frc.robot.io.implementations.motor.MotorIOBase.MotorIOBaseSettings;
+import frc.robot.io.implementations.motor.MotorIOElevatorStub;
 import frc.robot.io.implementations.motor.MotorIOSparkMax;
 import frc.robot.io.implementations.motor.MotorIOSparkMax.SparkMaxSettings;
 import frc.robot.io.implementations.motor.MotorIOTalonFx;
 import frc.robot.io.implementations.motor.MotorIOTalonFx.TalonFxSettings;
 import frc.robot.subsystems.controls.arm.ArmControls;
+import frc.robot.subsystems.controls.drive.DriveControls;
+import frc.robot.subsystems.controls.elevator.ElevatorControls;
 import frc.robot.subsystems.implementations.drive.DriveBase;
 import frc.robot.subsystems.implementations.motor.ArmMotorSubsystem;
+import frc.robot.subsystems.implementations.motor.ElevatorMotorSubsystem;
 import frc.robot.subsystems.interfaces.Arm.ArmSettings;
+import frc.robot.subsystems.interfaces.Elevator.ElevatorSettings;
+
 import java.util.Properties;
 
 /* Put all constants here with reasonable defaults */
 public class RobotConfig {
   public DriveBase drive;
   public ArmMotorSubsystem arm;
+  public ElevatorMotorSubsystem elevator;
   public SendableChooser<Command> autoChooser;
   // TODO: Add VisionSubsystem Declaration
 
@@ -34,7 +42,8 @@ public class RobotConfig {
   public CommandXboxController assistController = new CommandXboxController(1);
 
   public RobotConfig(Properties robotProperties) {
-    arm = createArm(robotProperties, "myArm");
+    // arm = createArm(robotProperties, "myArm");
+    elevator = createElevator(robotProperties, "myElevator");
   }
 
   public RobotConfig(boolean stubDrive, boolean stubAuto, boolean stubVision) {
@@ -64,7 +73,8 @@ public class RobotConfig {
     // DriveControls.setupController(drive, mainController);
     // Send vision-based odometry measurements to drive's odometry calculations
     // vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
-    ArmControls.setupController(arm, mainController);
+    // ArmControls.setupController(arm, mainController);
+    ElevatorControls.setupController(elevator, mainController);
     if (null != this.autoChooser) {
       SmartDashboard.putData("Autonomous", this.autoChooser);
     }
@@ -72,58 +82,44 @@ public class RobotConfig {
 
   private ArmMotorSubsystem createArm(Properties robotProperties, String name) {
     ArmSettings armSettings = new ArmSettings();
-    String armSettingPrefix = name + ".armSettings";
+    String armSettingsPrefix = name + ".armSettings";
 
     armSettings.color =
         new Color8Bit(
-            Integer.parseInt(robotProperties.getProperty(armSettingPrefix + ".color.red")),
-            Integer.parseInt(robotProperties.getProperty(armSettingPrefix + ".color.green")),
-            Integer.parseInt(robotProperties.getProperty(armSettingPrefix + ".color.blue")));
+            Integer.parseInt(robotProperties.getProperty(armSettingsPrefix + ".color.red")),
+            Integer.parseInt(robotProperties.getProperty(armSettingsPrefix + ".color.green")),
+            Integer.parseInt(robotProperties.getProperty(armSettingsPrefix + ".color.blue")));
 
     armSettings.minAngleInDegrees =
-        Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".minAngleInDegrees"));
+        Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".minAngleInDegrees"));
     armSettings.maxAngleInDegrees =
-        Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".maxAngleInDegrees"));
+        Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".maxAngleInDegrees"));
     armSettings.startingAngleInDegrees =
         Double.parseDouble(
-            robotProperties.getProperty(armSettingPrefix + ".startingAngleInDegrees"));
+            robotProperties.getProperty(armSettingsPrefix + ".startingAngleInDegrees"));
     armSettings.maxVelocityInDegreesPerSecond =
         Double.parseDouble(
-            robotProperties.getProperty(armSettingPrefix + ".maxVelocityInDegreesPerSecond"));
+            robotProperties.getProperty(armSettingsPrefix + ".maxVelocityInDegreesPerSecond"));
     armSettings.maxAccelerationInDegreesPerSecondSquared =
         Double.parseDouble(
             robotProperties.getProperty(
-                armSettingPrefix + ".maxAccelerationInDegreesPerSecondSquared"));
+                armSettingsPrefix + ".maxAccelerationInDegreesPerSecondSquared"));
 
     armSettings.feedforward =
         new ArmFeedforward(
-            Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".feedforward.ks")),
-            Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".feedforward.kg")),
-            Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".feedforward.kv")));
+            Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.ks")),
+            Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.kg")),
+            Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.kv")));
 
-    armSettings.motor = getDCMotor(robotProperties.getProperty(armSettingPrefix + ".DCMotor"));
+    armSettings.motor = getDCMotor(robotProperties.getProperty(armSettingsPrefix + ".DCMotor"));
     armSettings.simulateGravity =
-        Boolean.parseBoolean(robotProperties.getProperty(armSettingPrefix + ".simulateGravity"));
+        Boolean.parseBoolean(robotProperties.getProperty(armSettingsPrefix + ".simulateGravity"));
     armSettings.armLengthInMeters =
-        Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".armLengthInMeters"));
+        Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".armLengthInMeters"));
     armSettings.armMassInKg =
-        Double.parseDouble(robotProperties.getProperty(armSettingPrefix + ".armMassInKg"));
+        Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".armMassInKg"));
 
-    MotorIOBaseSettings IOSettings = new MotorIOBaseSettings();
-    String IOSettingPrefix = name + ".IOSetting";
-
-    IOSettings.motor.inverted =
-        Boolean.parseBoolean(robotProperties.getProperty(IOSettingPrefix + ".inverted"));
-    IOSettings.motor.gearing =
-        Double.parseDouble(robotProperties.getProperty(IOSettingPrefix + ".gearing"));
-    IOSettings.motor.drumRadiusMeters =
-        Double.parseDouble(robotProperties.getProperty(IOSettingPrefix + ".drumRadiusMeters"));
-
-    IOSettings.pid =
-        new PIDController(
-            Double.parseDouble(robotProperties.getProperty(IOSettingPrefix + ".pid.kp")),
-            Double.parseDouble(robotProperties.getProperty(IOSettingPrefix + ".pid.ki")),
-            Double.parseDouble(robotProperties.getProperty(IOSettingPrefix + ".pid.kp")));
+    MotorIOBaseSettings IOSettings = getMotorIOBaseSettings(robotProperties, name);
 
     switch (robotProperties.getProperty(name + ".motor.motorController")) {
       case "talonFX":
@@ -145,6 +141,89 @@ public class RobotConfig {
         return new ArmMotorSubsystem(
             new MotorIOArmStub(IOSettings, armSettings), name, armSettings);
     }
+  }
+
+  private ElevatorMotorSubsystem createElevator(Properties robotProperties, String name) {
+    ElevatorSettings elevatorSettings = new ElevatorSettings();
+    String elevatorSettingsPrefix = name + ".elevatorSettings";
+
+    elevatorSettings.color =
+        new Color8Bit(
+            Integer.parseInt(robotProperties.getProperty(elevatorSettingsPrefix + ".color.red")),
+            Integer.parseInt(robotProperties.getProperty(elevatorSettingsPrefix + ".color.green")),
+            Integer.parseInt(robotProperties.getProperty(elevatorSettingsPrefix + ".color.blue")));
+
+    elevatorSettings.minHeightInMeters =
+        Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".minHeightInMeters"));
+    elevatorSettings.maxHeightInMeters =
+        Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".maxHeightInMeters"));
+    elevatorSettings.startingHeightInMeters =
+        Double.parseDouble(
+            robotProperties.getProperty(elevatorSettingsPrefix + ".startingHeightInMeters"));
+    elevatorSettings.maxVelocityInMetersPerSecond =
+        Double.parseDouble(
+            robotProperties.getProperty(elevatorSettingsPrefix + ".maxVelocityInMetersPerSecond"));
+    elevatorSettings.maxAccelerationInMetersPerSecondSquared =
+        Double.parseDouble(
+            robotProperties.getProperty(
+                elevatorSettingsPrefix + ".maxAccelerationInMetersPerSecondSquared"));
+
+    elevatorSettings.feedforward =
+        new ElevatorFeedforward(
+            Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.ks")),
+            Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.kg")),
+            Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.kv"))
+            );
+
+    elevatorSettings.motor = getDCMotor(robotProperties.getProperty(elevatorSettingsPrefix + ".DCMotor"));
+    elevatorSettings.simulateGravity =
+        Boolean.parseBoolean(robotProperties.getProperty(elevatorSettingsPrefix + ".simulateGravity"));
+    elevatorSettings.carriageMassKg =
+        Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".carriageMassKg"));
+    
+
+    MotorIOBaseSettings IOSettings = getMotorIOBaseSettings(robotProperties, name);
+
+    switch (robotProperties.getProperty(name + ".motor.motorController")) {
+      case "talonFX":
+        TalonFxSettings talonSettings = new TalonFxSettings();
+        talonSettings.canId =
+            Integer.parseInt(robotProperties.getProperty(name + ".talonFX.setting.id"));
+        return new ElevatorMotorSubsystem(
+            new MotorIOTalonFx(IOSettings, talonSettings), name, elevatorSettings);
+
+      case "sparkMax":
+        SparkMaxSettings sparkMaxSettings = new SparkMaxSettings();
+        sparkMaxSettings.canId =
+            Integer.parseInt(robotProperties.getProperty(name + ".sparkMax.setting.id"));
+        return new ElevatorMotorSubsystem(
+            new MotorIOSparkMax(IOSettings, sparkMaxSettings), name, elevatorSettings);
+
+      case "sim":
+      default:
+        return new ElevatorMotorSubsystem(
+            new MotorIOElevatorStub(IOSettings, elevatorSettings), name, elevatorSettings);
+    }
+  }
+
+  private MotorIOBaseSettings getMotorIOBaseSettings(Properties robotProperties, String name) {
+    MotorIOBaseSettings IOSettings = new MotorIOBaseSettings();
+    String IOSettingsPrefix = name + ".IOSettings";
+
+    IOSettings.motor.inverted =
+        Boolean.parseBoolean(robotProperties.getProperty(IOSettingsPrefix + ".inverted"));
+    IOSettings.motor.gearing =
+        Double.parseDouble(robotProperties.getProperty(IOSettingsPrefix + ".gearing"));
+    IOSettings.motor.drumRadiusMeters =
+        Double.parseDouble(robotProperties.getProperty(IOSettingsPrefix + ".drumRadiusMeters"));
+
+    IOSettings.pid =
+        new PIDController(
+            Double.parseDouble(robotProperties.getProperty(IOSettingsPrefix + ".pid.kp")),
+            Double.parseDouble(robotProperties.getProperty(IOSettingsPrefix + ".pid.ki")),
+            Double.parseDouble(robotProperties.getProperty(IOSettingsPrefix + ".pid.kp")));
+    
+    return IOSettings;
   }
 
   private DCMotor getDCMotor(String motor) {
