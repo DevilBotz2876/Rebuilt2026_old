@@ -3,6 +3,9 @@ package frc.robot.config.game.rebuilt2026;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstants;
 import frc.robot.io.implementations.motor.MotorIOArmStub;
 import frc.robot.io.implementations.motor.MotorIOBase.MotorIOBaseSettings;
 import frc.robot.io.implementations.motor.MotorIOElevatorStub;
@@ -22,6 +26,7 @@ import frc.robot.subsystems.controls.arm.ArmControls;
 import frc.robot.subsystems.controls.drive.DriveControls;
 import frc.robot.subsystems.controls.elevator.ElevatorControls;
 import frc.robot.subsystems.implementations.drive.DriveBase;
+import frc.robot.subsystems.implementations.drive.DriveSwerveCTRE;
 import frc.robot.subsystems.implementations.motor.ArmMotorSubsystem;
 import frc.robot.subsystems.implementations.motor.ElevatorMotorSubsystem;
 import frc.robot.subsystems.interfaces.Arm.ArmSettings;
@@ -42,6 +47,17 @@ public class RobotConfig {
   public CommandXboxController assistController = new CommandXboxController(1);
 
   public RobotConfig(Properties robotProperties) {
+    if (robotProperties.containsKey("robot.drive")) {
+      if(robotProperties.getProperty("robot.drive").equals("ctre")) {
+        drive = new DriveSwerveCTRE(new TunerConstants(robotProperties));
+      }
+    } else {
+      drive = new DriveBase("Stub");
+    }
+
+    if (Robot.isSimulation()) {
+      drive.setPose(new Pose2d(new Translation2d(1, 1), new Rotation2d()));
+    }
     // arm = createArm(robotProperties, "myArm");
     elevator = createElevator(robotProperties, "myElevator");
   }
@@ -70,7 +86,7 @@ public class RobotConfig {
       // HACK just to verify autos are visible without connecting to robot
       // this.autoChooser = AutoBuilder.buildAutoChooser("Sit Still");
     }
-    // DriveControls.setupController(drive, mainController);
+    DriveControls.setupController(drive, mainController);
     // Send vision-based odometry measurements to drive's odometry calculations
     // vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
     // ArmControls.setupController(arm, mainController);
