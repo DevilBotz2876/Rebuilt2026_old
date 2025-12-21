@@ -3,6 +3,7 @@ package frc.robot.config.game.rebuilt2026;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,6 +19,7 @@ import frc.robot.config.game.rebuilt2026.tunerConstants.TunerConstants;
 import frc.robot.io.implementations.motor.MotorIOArmStub;
 import frc.robot.io.implementations.motor.MotorIOBase.MotorIOBaseSettings;
 import frc.robot.io.implementations.motor.MotorIOElevatorStub;
+import frc.robot.io.implementations.motor.MotorIOFlywheelStub;
 import frc.robot.io.implementations.motor.MotorIOSparkMax;
 import frc.robot.io.implementations.motor.MotorIOSparkMax.SparkMaxSettings;
 import frc.robot.io.implementations.motor.MotorIOTalonFx;
@@ -25,12 +27,16 @@ import frc.robot.io.implementations.motor.MotorIOTalonFx.TalonFxSettings;
 import frc.robot.subsystems.controls.arm.ArmControls;
 import frc.robot.subsystems.controls.drive.DriveControls;
 import frc.robot.subsystems.controls.elevator.ElevatorControls;
+import frc.robot.subsystems.controls.flywheel.FlywheelControls;
 import frc.robot.subsystems.implementations.drive.DriveBase;
 import frc.robot.subsystems.implementations.drive.DriveSwerveCTRE;
 import frc.robot.subsystems.implementations.motor.ArmMotorSubsystem;
 import frc.robot.subsystems.implementations.motor.ElevatorMotorSubsystem;
+import frc.robot.subsystems.implementations.motor.FlywheelMotorSubsystem;
+import frc.robot.subsystems.interfaces.Flywheel;
 import frc.robot.subsystems.interfaces.Arm.ArmSettings;
 import frc.robot.subsystems.interfaces.Elevator.ElevatorSettings;
+import frc.robot.subsystems.interfaces.Flywheel.FlywheelSettings;
 
 import java.util.Properties;
 
@@ -39,6 +45,7 @@ public class RobotConfig {
   public DriveBase drive;
   public ArmMotorSubsystem arm;
   public ElevatorMotorSubsystem elevator;
+  public FlywheelMotorSubsystem flywheel;
   public SendableChooser<Command> autoChooser;
   // TODO: Add VisionSubsystem Declaration
 
@@ -59,7 +66,8 @@ public class RobotConfig {
       drive.setPose(new Pose2d(new Translation2d(1, 1), new Rotation2d()));
     }
     // arm = createArm(robotProperties, "myArm");
-    elevator = createElevator(robotProperties, "myElevator");
+    // elevator = createElevator(robotProperties, "myElevator");
+    flywheel = createFlywheel(robotProperties, "myFlywheel");
   }
 
   public RobotConfig(boolean stubDrive, boolean stubAuto, boolean stubVision) {
@@ -90,9 +98,61 @@ public class RobotConfig {
     // Send vision-based odometry measurements to drive's odometry calculations
     // vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
     // ArmControls.setupController(arm, mainController);
-    ElevatorControls.setupController(elevator, mainController);
+    // ElevatorControls.setupController(elevator, mainController);
+    FlywheelControls.setupController(flywheel, mainController);
     if (null != this.autoChooser) {
       SmartDashboard.putData("Autonomous", this.autoChooser);
+    }
+  }
+
+  private FlywheelMotorSubsystem createFlywheel(Properties robotProperties, String name) {
+    FlywheelSettings flywheelSettings = new FlywheelSettings();
+    String flywheelSettingsPrefix = name + ".flywheelSettings";
+
+    flywheelSettings.color =
+        new Color8Bit(
+            Integer.parseInt(robotProperties.getProperty(flywheelSettingsPrefix + ".color.red")),
+            Integer.parseInt(robotProperties.getProperty(flywheelSettingsPrefix + ".color.green")),
+            Integer.parseInt(robotProperties.getProperty(flywheelSettingsPrefix + ".color.blue")));
+
+    flywheelSettings.maxVelocityInRPMs =
+        Double.parseDouble(robotProperties.getProperty(flywheelSettingsPrefix + ".maxVelocityInRPMs"));
+    flywheelSettings.targetVelocityToleranceInRPMs =
+        Double.parseDouble(robotProperties.getProperty(flywheelSettingsPrefix + ".targetVelocityToleranceInRPMs"));
+    flywheelSettings.moiKgMetersSquared =
+        Double.parseDouble(
+            robotProperties.getProperty(
+              flywheelSettingsPrefix + ".moiKgMetersSquared"));
+
+    flywheelSettings.feedforward =
+        new SimpleMotorFeedforward(
+            Double.parseDouble(robotProperties.getProperty(flywheelSettingsPrefix + ".feedforward.ks")),
+            Double.parseDouble(robotProperties.getProperty(flywheelSettingsPrefix + ".feedforward.kv")),
+            Double.parseDouble(robotProperties.getProperty(flywheelSettingsPrefix + ".feedforward.ka", "0.0")));
+
+    flywheelSettings.motor = getDCMotor(robotProperties.getProperty(flywheelSettingsPrefix + ".DCMotor"));
+    
+    MotorIOBaseSettings IOSettings = getMotorIOBaseSettings(robotProperties, name);
+
+    switch (robotProperties.getProperty(name + ".motor.motorController")) {
+      case "talonFX":
+        TalonFxSettings talonSettings = new TalonFxSettings();
+        talonSettings.canId =
+            Integer.parseInt(robotProperties.getProperty(name + ".talonFX.setting.id"));
+        return new FlywheelMotorSubsystem(
+            new MotorIOTalonFx(IOSettings, talonSettings), name, flywheelSettings);
+
+      case "sparkMax":
+        SparkMaxSettings sparkMaxSettings = new SparkMaxSettings();
+        sparkMaxSettings.canId =
+            Integer.parseInt(robotProperties.getProperty(name + ".sparkMax.setting.id"));
+        return new FlywheelMotorSubsystem(
+            new MotorIOSparkMax(IOSettings, sparkMaxSettings), name, flywheelSettings);
+
+      case "sim":
+      default:
+        return new FlywheelMotorSubsystem(
+            new MotorIOFlywheelStub(IOSettings, flywheelSettings), name, flywheelSettings);
     }
   }
 
@@ -125,7 +185,9 @@ public class RobotConfig {
         new ArmFeedforward(
             Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.ks")),
             Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.kg")),
-            Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.kv")));
+            Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.kv")),
+            Double.parseDouble(robotProperties.getProperty(armSettingsPrefix + ".feedforward.ka", "0.0"))
+            );
 
     armSettings.motor = getDCMotor(robotProperties.getProperty(armSettingsPrefix + ".DCMotor"));
     armSettings.simulateGravity =
@@ -188,7 +250,8 @@ public class RobotConfig {
         new ElevatorFeedforward(
             Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.ks")),
             Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.kg")),
-            Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.kv"))
+            Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.kv")),
+            Double.parseDouble(robotProperties.getProperty(elevatorSettingsPrefix + ".feedforward.ka", "0.0"))
             );
 
     elevatorSettings.motor = getDCMotor(robotProperties.getProperty(elevatorSettingsPrefix + ".DCMotor"));
