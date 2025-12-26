@@ -1,22 +1,59 @@
 package frc.robot.subsystems.interfaces;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.io.interfaces.VisionIO;
-import frc.robot.io.interfaces.VisionIO.PoseEsitmatorData;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import java.util.List;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface Vision {
-    
-    
-    public Pose2d getBestTargetPose(String name);
-    private void updateIO(VisionIO io) {
-        // updateinputs
-        // checkPoseData
-        // addVisionMeasurement(validPoseStuff)
-    };
-    private boolean checkPoseData(PoseEsitmatorData poseData) {
-        // more than one tag
-        // tags are within the field
-        // ambiguity > 0.2
-        return true;
+  @FunctionalInterface
+  interface VisionMeasurementConsumer {
+    void add(Pose2d robotPose, double timestamp, Matrix<N3, N1> stdDevs);
+  }
+
+  public interface Camera {
+    @AutoLog
+    public class CameraInputs {
+      public boolean isConnected = false;
+      public double fps;
+      public int[] targetIds = new int[0];
+      public Pose2d cameraPose; // robotPose maybe instead
     }
+
+    public static class VisionPoseMeasurement {
+      public double timestamp;
+      public Pose2d robotPose;
+      public int targetCount;
+      public double ambiguity;
+      // somekind of distance to verify if it is good to use.
+      // but what if many tags. maybe only if one tag
+    }
+
+    public void updateInputs(CameraInputs inputs);
+
+    public Transform3d getRobotToCamera();
+
+    public String getName();
+
+    public VisionPoseMeasurement[] getVisionPoseMeasurements();
+  }
+
+  public default void setVisionMeasurementConsumer(VisionMeasurementConsumer func) {}
+
+  public default boolean isValidPoseMeasurement(
+      frc.robot.subsystems.interfaces.Vision.Camera.VisionPoseMeasurement poseMeasurement) {
+    return true;
+  }
+
+  public void updateCamera(int index);
+
+  public void addCamera(Camera camera);
+
+  public List<Camera> getCameras();
+
+  public AprilTagFieldLayout getFieldLayout();
 }
