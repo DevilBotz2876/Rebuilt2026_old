@@ -57,6 +57,17 @@ public class RobotConfig {
                     Angle.ofBaseUnits(0, Degrees))),
             vision.getFieldLayout(),
             () -> drive.getPose()));
+      vision.addCamera(
+              new CameraPhotonSim(
+                  "sim2",
+                  new Transform3d(
+                      new Translation3d(Units.inchesToMeters(12), Units.inchesToMeters(12), 0),
+                      new Rotation3d(
+                          Angle.ofBaseUnits(0, Degrees),
+                          Angle.ofBaseUnits(-45, Degrees),
+                          Angle.ofBaseUnits(-45, Degrees))),
+                  vision.getFieldLayout(),
+                  () -> drive.getPose()));
   }
 
   public RobotConfig(boolean stubDrive, boolean stubAuto, boolean stubVision) {

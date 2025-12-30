@@ -40,8 +40,9 @@ public class CameraPhoton implements Camera {
       VisionPoseMeasurement measurement = new VisionPoseMeasurement();
 
       if (!result.hasTargets()) {
-        // no ta
-        measurement.targetCount = 0;
+        measurement.targetIds = new int[0];
+        inputs.targetIds = new int[0];
+          // continue;
       } else if (result.multitagResult.isPresent()) {
         MultiTargetPNPResult multitagResult = result.multitagResult.get();
         Pose2d cameraPose =
@@ -60,12 +61,30 @@ public class CameraPhoton implements Camera {
                         robotToCamera.getTranslation().toTranslation2d(),
                         robotToCamera.getRotation().toRotation2d()))
                     .inverse());
-        measurement.targetCount = multitagResult.fiducialIDsUsed.size();
+        measurement.targetIds = inputs.targetIds;
         measurement.ambiguity = multitagResult.estimatedPose.ambiguity;
         measurement.timestamp = result.getTimestampSeconds();
       } else {
         // one tag
         // use location on field to determine
+        Pose3d aprilTagPose = tagLayout.getTagPose(result.getBestTarget().fiducialId).get();
+        Pose2d cameraPose =
+            new Pose3d(aprilTagPose.getTranslation(), aprilTagPose.getRotation())
+                .plus(result.getBestTarget().bestCameraToTarget.inverse())
+                .toPose2d();
+        inputs.cameraPose = cameraPose;
+        inputs.targetIds = new int[1];
+        inputs.targetIds[0] = result.getBestTarget().fiducialId;
+
+        measurement.robotPose =
+            cameraPose.transformBy(
+                (new Transform2d(
+                        robotToCamera.getTranslation().toTranslation2d(),
+                        robotToCamera.getRotation().toRotation2d()))
+                    .inverse());
+        measurement.targetIds = inputs.targetIds;
+        measurement.ambiguity = result.getBestTarget().getPoseAmbiguity();
+        measurement.timestamp = result.getTimestampSeconds();
       }
       poseMeasurements[i] = measurement;
     }
@@ -74,6 +93,7 @@ public class CameraPhoton implements Camera {
   @Override
   public String getName() {
     return name;
+
   }
 
   @Override

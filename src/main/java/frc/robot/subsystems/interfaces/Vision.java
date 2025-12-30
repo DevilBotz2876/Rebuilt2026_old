@@ -27,7 +27,7 @@ public interface Vision {
     public static class VisionPoseMeasurement {
       public double timestamp;
       public Pose2d robotPose;
-      public int targetCount;
+      public int[] targetIds;
       public double ambiguity;
       // somekind of distance to verify if it is good to use.
       // but what if many tags. maybe only if one tag
