@@ -64,6 +64,8 @@ public class CameraPhoton implements Camera {
         measurement.targetIds = inputs.targetIds;
         measurement.ambiguity = multitagResult.estimatedPose.ambiguity;
         measurement.timestamp = result.getTimestampSeconds();
+        // robot to camera + camera to target = robot to target
+        measurement.robotToBestTargetDistanceInMeters = robotToCamera.plus(result.getBestTarget().getBestCameraToTarget()).getTranslation().getDistance(Translation3d.kZero);
       } else {
         // one tag
         // use location on field to determine
@@ -85,6 +87,9 @@ public class CameraPhoton implements Camera {
         measurement.targetIds = inputs.targetIds;
         measurement.ambiguity = result.getBestTarget().getPoseAmbiguity();
         measurement.timestamp = result.getTimestampSeconds();
+
+        // robot to camera + camera to target = robot to target
+        measurement.robotToBestTargetDistanceInMeters = robotToCamera.plus(result.getBestTarget().getBestCameraToTarget()).getTranslation().getDistance(Translation3d.kZero);
       }
       poseMeasurements[i] = measurement;
     }

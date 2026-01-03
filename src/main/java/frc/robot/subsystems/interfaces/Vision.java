@@ -25,10 +25,11 @@ public interface Vision {
     }
 
     public static class VisionPoseMeasurement {
-      public double timestamp;
-      public Pose2d robotPose;
-      public int[] targetIds;
-      public double ambiguity;
+      public double timestamp = -1.0;
+      public Pose2d robotPose = new Pose2d();
+      public int[] targetIds = new int[0];
+      public double robotToBestTargetDistanceInMeters = -1.0;
+      public double ambiguity = 999;
       // somekind of distance to verify if it is good to use.
       // but what if many tags. maybe only if one tag
     }

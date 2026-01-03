@@ -23,6 +23,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   private Optional<VisionMeasurementConsumer> visionMeasurementConsumer;
 
   private final double timestampTolereanceInSeconds = 0.2;
+  private final double validSingleTagDistanceMeter = 2.0;
 
   public VisionSubsystem(AprilTagFieldLayout layout) {
     fieldLayout = layout;
@@ -43,6 +44,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
       int i = -1;
       for(VisionPoseMeasurement poseMeasurement : cameras.get(cameraIndex).getVisionPoseMeasurements()) {
         i++;
+        boolean isValid = false;
 
         // if already valid no need to check
         if(validPoseMeasurements.contains(poseMeasurement)) {
@@ -54,6 +56,15 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
           validPoseMeasurements.add(poseMeasurement);
           Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/vaild", true);
           Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/reason", "MultiTag with IDs:" + Arrays.toString(poseMeasurement.targetIds));
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/matchingMeasurement", "N/A");
+          continue;
+        }
+
+        // one tag seen but is close then valid
+        if(poseMeasurement.robotToBestTargetDistanceInMeters > -1 && poseMeasurement.robotToBestTargetDistanceInMeters <= validSingleTagDistanceMeter) {
+          validPoseMeasurements.add(poseMeasurement);
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/vaild", true);
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/reason", "Single tag with distance of :" + poseMeasurement.robotToBestTargetDistanceInMeters);
           Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/matchingMeasurement", "N/A");
           continue;
         }
@@ -73,11 +84,12 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
             for(int seenAprilTagIdPoseMeasurementIndex = 0; seenAprilTagIdPoseMeasurementIndex < seenTagIdmap.get(aprilTagId).size(); seenAprilTagIdPoseMeasurementIndex++) {
               // if the measurements where at different times, then dont comapare
               if(Math.abs(poseMeasurement.timestamp - seenTagIdmap.get(aprilTagId).get(seenAprilTagIdPoseMeasurementIndex).timestamp) > timestampTolereanceInSeconds) {
-                Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/vaild", false);
                 continue;
               }
 
               validPoseMeasurements.add(poseMeasurement);
+              isValid = true;
+
               Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/vaild", true);
               Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/reason", "Same AprilTag as different camera (ID:" + aprilTagId + " )");
               Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/matchingMeasurement", "CameraName:" + cameras.get(knownTagsCameraIndex).getName() + " PoseIndex: " + seenAprilTagIdPoseMeasurementIndex);
@@ -88,8 +100,13 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                 Logger.recordOutput("Vision/" + cameras.get(knownTagsCameraIndex).getName() + "/PoseMeasurements/" + seenAprilTagIdPoseMeasurementIndex + "/reason", "Same AprilTag as different camera (ID:" + aprilTagId + " )");
                 Logger.recordOutput("Vision/" + cameras.get(knownTagsCameraIndex).getName() + "/PoseMeasurements/" + seenAprilTagIdPoseMeasurementIndex + "/matchingMeasurement", "CameraName:" + cameras.get(cameraIndex).getName() + " PoseIndex: " + i);
               }
+              break;
             }
           }
+        }
+        if(!isValid) {
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/vaild", false);
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/reason", "Single Tag with no match and is greater than min valid distance");
         }
       }
     }
@@ -121,6 +138,12 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
 
       // get valid measurement
       for (int i = 0; i < poseMeasurements.length; i++) {
+
+        if(poseMeasurements[i].targetIds.length == 0) {
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/vaild", false);
+          Logger.recordOutput("Vision/" + cameras.get(cameraIndex).getName() + "/PoseMeasurements/" + String.valueOf(i) + "/reason", "No April Tags");
+          continue;
+        }
         
         for (int j = 0; j < poseMeasurements[i].targetIds.length; j++) {
           if(cameraTagPoses.get(cameraIndex).containsKey(poseMeasurements[i].targetIds[j])) {
@@ -134,6 +157,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
         Logger.recordOutput("Vision/" + camera.getName() + "/PoseMeasurements/" + String.valueOf(i) + "/timestamp", poseMeasurements[i].timestamp);
         Logger.recordOutput("Vision/" + camera.getName() + "/PoseMeasurements/" + String.valueOf(i) + "/targetIds", poseMeasurements[i].targetIds);
         Logger.recordOutput("Vision/" + camera.getName() + "/PoseMeasurements/" + String.valueOf(i) + "/robotPose", poseMeasurements[i].robotPose);
+        Logger.recordOutput("Vision/" + camera.getName() + "/PoseMeasurements/" + String.valueOf(i) + "/bestTargetDistance", poseMeasurements[i].robotToBestTargetDistanceInMeters);
       }
     }
 
