@@ -19,7 +19,6 @@ public interface Vision {
     @AutoLog
     public class CameraInputs {
       public boolean isConnected = false;
-      public double fps;
       public int[] targetIds = new int[0];
       public double cameraDistanceToTargetMeters = -1;
       public Pose2d cameraPose;

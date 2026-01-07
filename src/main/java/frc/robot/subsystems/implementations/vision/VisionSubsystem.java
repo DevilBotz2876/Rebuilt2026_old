@@ -98,8 +98,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                 VisionPoseMeasurement possiblePoseMeasurementMatch =
                     posesAtSeenTag.get(posesAtSeenTag.size() - 1); // get latest
 
-                // if the measurements where at different times or same poseMeasurement, then dont
-                // comapare
+                // if the measurements where at different times, then dont comapare
                 if (Math.abs(poseMeasurement.timestamp - possiblePoseMeasurementMatch.timestamp)
                     > TIMESTAMP_TOLERANCE_SECONDS) {
                   continue;
@@ -171,7 +170,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
             reason = "MultiTag with IDs:" + Arrays.toString(poseMeasurement.targetIds);
           } else if (poseMeasurement.robotToBestTargetDistanceInMeters != -1
               && poseMeasurement.robotToBestTargetDistanceInMeters
-                  <= MAXIMUM_SUNGLE_TAG_DISTANCE_METERS) {
+                  <= MAXIMUM_SINGLE_TAG_DISTANCE_METERS) {
             reason =
                 "Single tag with distance of : "
                     + poseMeasurement.robotToBestTargetDistanceInMeters;
@@ -209,10 +208,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
           .add(
               validPoseMeasurements.get(i).robotPose,
               validPoseMeasurements.get(i).timestamp,
-              VecBuilder.fill(
-                  distanceMeters / 2,
-                  distanceMeters / 2,
-                  distanceMeters / 2)); 
+              VecBuilder.fill(distanceMeters / 2, distanceMeters / 2, distanceMeters / 2));
     }
 
     cameraTagPoses.clear();
