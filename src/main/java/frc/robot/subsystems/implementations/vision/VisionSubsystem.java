@@ -27,7 +27,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   // maximum allow time between 2 poseMeasurements to still be considered vaild, need to tune
   private final double TIMESTAMP_TOLERANCE_SECONDS = 0.5;
   // maximum distance between robot and tag for poseMeasurement to be vailid to be considered
-  private final double MAXIMUM_SUNGLE_TAG_DISTANCE_METERS = 2.0; // need to tune to robot
+  private final double MAXIMUM_SINGLE_TAG_DISTANCE_METERS = 2.0; // need to tune to robot
   // show if pose measurement is valid, reason (and matching pose if there is one) and
   // poseMeasurement data at
   // AdvagtageKit/RealOutputs/Vision/'cameraName'/PoseMeasurements/'poseIndex'/
@@ -43,12 +43,8 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
 
   @Override
   public void periodic() {
-    cameraTagPoses.clear();
     for (int i = 0; i < cameras.size(); i++) {
       cameraTagPoses.add(new HashMap<>());
-    }
-
-    for (int i = 0; i < cameras.size(); i++) {
       updateCamera(i);
     }
 
@@ -75,7 +71,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
           // one tag seen but is close then valid
           if (poseMeasurement.robotToBestTargetDistanceInMeters != -1
               && poseMeasurement.robotToBestTargetDistanceInMeters
-                  <= MAXIMUM_SUNGLE_TAG_DISTANCE_METERS) {
+                  <= MAXIMUM_SINGLE_TAG_DISTANCE_METERS) {
             validPoseMeasurements.add(poseMeasurement);
             continue;
           } else {
