@@ -1,7 +1,9 @@
 package frc.robot.subsystems.implementations.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.interfaces.CameraInputsAutoLogged;
 import frc.robot.subsystems.interfaces.Vision;
@@ -25,7 +27,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   private Optional<VisionMeasurementConsumer> visionMeasurementConsumer;
 
   // maximum allow time between 2 poseMeasurements to still be considered vaild, need to tune
-  private final double TIMESTAMP_TOLERANCE_SECONDS = 0.5;
+  private final double TIMESTAMP_TOLERANCE_SECONDS = 0.2;
   // maximum distance between robot and tag for poseMeasurement to be vailid to be considered
   private final double MAXIMUM_SINGLE_TAG_DISTANCE_METERS = 2.0; // need to tune to robot
   // show if pose measurement is valid, reason (and matching pose if there is one) and
@@ -50,8 +52,6 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
 
     List<VisionPoseMeasurement> validPoseMeasurements = new LinkedList<>();
 
-    String poseMatchDebugInfo = "N/A";
-    String otherPoseMatchDebugInfo = "N/A";
     for (int cameraIndex = 0; cameraIndex < cameras.size(); cameraIndex++) {
       int i = -1;
       for (VisionPoseMeasurement poseMeasurement :
@@ -74,61 +74,18 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                   <= MAXIMUM_SINGLE_TAG_DISTANCE_METERS) {
             validPoseMeasurements.add(poseMeasurement);
             continue;
-          } else {
-            // check poseMeasurement from other cameras for matching tag
-            boolean matchingTag = false;
-            VisionPoseMeasurement matchedMeasurement = null;
-            for (int knownTagsCameraIndex = 0;
-                knownTagsCameraIndex < cameraTagPoses.size();
-                knownTagsCameraIndex++) {
-              // Dont check the same camera as the poseMeasurement
-              if (cameraIndex == knownTagsCameraIndex) {
-                continue;
-              }
-              Map<Integer, List<VisionPoseMeasurement>> seenTagIdmap =
-                  cameraTagPoses.get(knownTagsCameraIndex);
-              for (int aprilTagId : poseMeasurement.targetIds) {
-                // if the aprilTagId is in the map
-                if (!seenTagIdmap.containsKey(aprilTagId)) {
-                  continue;
-                }
+          }
+          // check poseMeasurement from other cameras for matching tag
+          else {
+            // camera index, april
+            Optional<Pair<Integer, Pair<Integer, VisionPoseMeasurement>>> matchingPoseOptional =
+                getMatchingTagPoseMeasuremnet(cameraIndex, poseMeasurement);
+            if (matchingPoseOptional.isPresent()) {
+              int matchingCameraIndex = matchingPoseOptional.get().getFirst();
+              int matchingTagId = matchingPoseOptional.get().getSecond().getFirst();
+              VisionPoseMeasurement matchingPoseMeasurement =
+                  matchingPoseOptional.get().getSecond().getSecond();
 
-                List<VisionPoseMeasurement> posesAtSeenTag = seenTagIdmap.get(aprilTagId);
-
-                VisionPoseMeasurement possiblePoseMeasurementMatch =
-                    posesAtSeenTag.get(posesAtSeenTag.size() - 1); // get latest
-
-                // if the measurements where at different times, then dont comapare
-                if (Math.abs(poseMeasurement.timestamp - possiblePoseMeasurementMatch.timestamp)
-                    > TIMESTAMP_TOLERANCE_SECONDS) {
-                  continue;
-                }
-
-                matchingTag = true;
-                matchedMeasurement = possiblePoseMeasurementMatch;
-                poseMatchDebugInfo =
-                    "Camera: "
-                        + cameras.get(knownTagsCameraIndex).getName()
-                        + " MatchingTagId: "
-                        + aprilTagId
-                        + " timestamp: "
-                        + possiblePoseMeasurementMatch.timestamp;
-                otherPoseMatchDebugInfo =
-                    "Camera: "
-                        + cameras.get(cameraIndex).getName()
-                        + " MatchingTagId: "
-                        + aprilTagId
-                        + " timestamp: "
-                        + poseMeasurement.timestamp;
-                if (matchingTag) {
-                  break;
-                }
-              }
-              if (matchingTag) {
-                break;
-              }
-            }
-            if (matchingTag) {
               validPoseMeasurements.add(poseMeasurement);
               if (VISION_LOGGING_DEBUG) {
                 Logger.recordOutput(
@@ -137,18 +94,28 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                         + "/PoseMeasurements/"
                         + String.valueOf(i)
                         + "/matchingMeasurementInfo",
-                    poseMatchDebugInfo);
+                    "Camera: "
+                        + cameras.get(matchingCameraIndex).getName()
+                        + " MatchingTagId: "
+                        + matchingTagId
+                        + " timestamp: "
+                        + matchingPoseMeasurement.timestamp);
               }
-              if (!validPoseMeasurements.contains(matchedMeasurement)) {
-                validPoseMeasurements.add(matchedMeasurement);
+
+              if (!validPoseMeasurements.contains(matchingPoseMeasurement)) {
+                validPoseMeasurements.add(matchingPoseMeasurement);
                 if (VISION_LOGGING_DEBUG) {
                   Logger.recordOutput(
                       "Vision/"
-                          + cameras.get(cameraIndex).getName()
-                          + "/PoseMeasurements/"
-                          + String.valueOf(i)
+                          + cameras.get(matchingCameraIndex).getName()
+                          + "/PoseMeasurements/0"
                           + "/matchingMeasurementInfo",
-                      otherPoseMatchDebugInfo);
+                      "Camera: "
+                          + cameras.get(cameraIndex).getName()
+                          + " MatchingTagId: "
+                          + matchingTagId
+                          + " timestamp: "
+                          + poseMeasurement.timestamp);
                 }
               }
             }
@@ -211,7 +178,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
               VecBuilder.fill(distanceMeters / 2, distanceMeters / 2, distanceMeters / 2));
     }
 
-    cameraTagPoses.clear();
+    // cameraTagPoses.clear();
   }
 
   @Override
@@ -275,6 +242,44 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
         }
       }
     }
+  }
+
+  // returns optional of pair (camera index, (aprilTag, poseMe)) or empty optional
+  private Optional<Pair<Integer, Pair<Integer, VisionPoseMeasurement>>>
+      getMatchingTagPoseMeasuremnet(int poseCameraIndex, VisionPoseMeasurement poseMeasurement) {
+    for (int knownTagsCameraIndex = 0;
+        knownTagsCameraIndex < cameraTagPoses.size();
+        knownTagsCameraIndex++) {
+      // Dont check the same camera as the poseMeasurement
+      if (poseCameraIndex == knownTagsCameraIndex) {
+        continue;
+      }
+      // map of the april tag ids to the poseMeasurements that saw the tag
+      Map<Integer, List<VisionPoseMeasurement>> seenTagIdmap =
+          cameraTagPoses.get(knownTagsCameraIndex);
+
+      for (int aprilTagId : poseMeasurement.targetIds) {
+        // if the aprilTagId is in the map
+        if (!seenTagIdmap.containsKey(aprilTagId)) {
+          continue;
+        }
+
+        List<VisionPoseMeasurement> posesAtSeenTag = seenTagIdmap.get(aprilTagId);
+
+        VisionPoseMeasurement possiblePoseMeasurementMatch =
+            posesAtSeenTag.get(posesAtSeenTag.size() - 1); // get latest
+
+        // if the measurements where at different times, then dont comapare
+        if (Math.abs(poseMeasurement.timestamp - possiblePoseMeasurementMatch.timestamp)
+            > TIMESTAMP_TOLERANCE_SECONDS) {
+          continue;
+        }
+        return Optional.of(
+            Pair.of(knownTagsCameraIndex, Pair.of(aprilTagId, possiblePoseMeasurementMatch)));
+      }
+    }
+
+    return Optional.empty();
   }
 
   @Override
