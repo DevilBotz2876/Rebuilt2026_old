@@ -33,7 +33,7 @@ public class CameraPhotonSim extends CameraPhoton {
 
     this.poseSupplier = poseSupplier;
 
-    // on fist sim camera, make the VisionSystemSim, rest of simulated camera usethe same system
+    // on fist sim camera, make the VisionSystemSim, rest of simulated camera use the same system
     if (simVision == null) {
       simVision = new VisionSystemSim("main");
       simVision.addAprilTags(tagLayout);

@@ -21,7 +21,8 @@ public interface Vision {
       public boolean isConnected = false;
       public double fps;
       public int[] targetIds = new int[0];
-      public Pose2d cameraPose; // robotPose maybe instead
+      public double cameraDistanceToTargetMeters = -1;
+      public Pose2d cameraPose;
     }
 
     public static class VisionPoseMeasurement {
@@ -41,13 +42,6 @@ public interface Vision {
     public String getName();
 
     public VisionPoseMeasurement[] getVisionPoseMeasurements();
-  }
-
-  public default void setVisionMeasurementConsumer(VisionMeasurementConsumer func) {}
-
-  public default boolean isValidPoseMeasurement(
-      frc.robot.subsystems.interfaces.Vision.Camera.VisionPoseMeasurement poseMeasurement) {
-    return true;
   }
 
   public void updateCamera(int index);

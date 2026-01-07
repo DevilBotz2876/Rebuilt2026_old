@@ -21,6 +21,7 @@ import frc.robot.subsystems.implementations.drive.DriveBase;
 import frc.robot.subsystems.implementations.drive.DriveSwerveCTRE;
 import frc.robot.subsystems.implementations.vision.VisionSubsystem;
 import frc.robot.subsystems.implementations.vision.camera.CameraPhotonSim;
+import java.util.Optional;
 import java.util.Properties;
 
 /* Put all constants here with reasonable defaults */
@@ -42,8 +43,10 @@ public class RobotConfig {
     }
 
     // no-args constructor, for now
-    vision = new VisionSubsystem(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo));
-    vision.setVisionMeasurementConsumer(drive::addVisionMeasurement);
+    vision =
+        new VisionSubsystem(
+            AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
+            Optional.of(drive::addVisionMeasurement));
 
     // "sim" camera that +12 inch along x axis and pitch of -45 degrees
     vision.addCamera(
@@ -57,17 +60,17 @@ public class RobotConfig {
                     Angle.ofBaseUnits(0, Degrees))),
             vision.getFieldLayout(),
             () -> drive.getPose()));
-      vision.addCamera(
-              new CameraPhotonSim(
-                  "sim2",
-                  new Transform3d(
-                      new Translation3d(Units.inchesToMeters(12), Units.inchesToMeters(12), 0),
-                      new Rotation3d(
-                          Angle.ofBaseUnits(0, Degrees),
-                          Angle.ofBaseUnits(-45, Degrees),
-                          Angle.ofBaseUnits(-45, Degrees))),
-                  vision.getFieldLayout(),
-                  () -> drive.getPose()));
+    vision.addCamera(
+        new CameraPhotonSim(
+            "sim2",
+            new Transform3d(
+                new Translation3d(Units.inchesToMeters(12), Units.inchesToMeters(12), 0),
+                new Rotation3d(
+                    Angle.ofBaseUnits(0, Degrees),
+                    Angle.ofBaseUnits(-45, Degrees),
+                    Angle.ofBaseUnits(-45, Degrees))),
+            vision.getFieldLayout(),
+            () -> drive.getPose()));
   }
 
   public RobotConfig(boolean stubDrive, boolean stubAuto, boolean stubVision) {
