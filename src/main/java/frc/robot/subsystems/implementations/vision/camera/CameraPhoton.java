@@ -68,7 +68,6 @@ public class CameraPhoton implements Camera {
                       robotToCamera.getRotation().toRotation2d()))
                   .inverse());
       measurement.targetIds = inputs.targetIds;
-      measurement.ambiguity = multitagResult.estimatedPose.ambiguity;
       measurement.timestamp = result.getTimestampSeconds();
       // robot to camera + camera to target = robot to target
       measurement.robotToBestTargetDistanceInMeters =
@@ -103,7 +102,6 @@ public class CameraPhoton implements Camera {
                       robotToCamera.getRotation().toRotation2d()))
                   .inverse());
       measurement.targetIds = inputs.targetIds;
-      measurement.ambiguity = result.getBestTarget().getPoseAmbiguity();
       measurement.timestamp = result.getTimestampSeconds();
 
       // robot to camera + camera to target = robot to target
