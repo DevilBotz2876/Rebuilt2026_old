@@ -27,7 +27,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   private Optional<VisionMeasurementConsumer> visionMeasurementConsumer;
 
   // maximum allow time between 2 poseMeasurements to still be considered vaild, need to tune
-  private final double TIMESTAMP_TOLERANCE_SECONDS = 0.2;
+  private final double TIMESTAMP_TOLERANCE_SECONDS = 10;
   // maximum distance between robot and tag for poseMeasurement to be vailid to be considered
   private final double MAXIMUM_SINGLE_TAG_DISTANCE_METERS = 2.0; // need to tune to robot
   // show if pose measurement is valid, reason (and matching pose if there is one) and
@@ -46,7 +46,6 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   @Override
   public void periodic() {
     for (int i = 0; i < cameras.size(); i++) {
-      cameraTagPoses.add(new HashMap<>());
       updateCamera(i);
     }
 
@@ -178,7 +177,22 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
               VecBuilder.fill(distanceMeters / 2, distanceMeters / 2, distanceMeters / 2));
     }
 
-    // cameraTagPoses.clear();
+    // cant clear all at the same time because camera are not sync
+    // check if a pose has be in there for "a while" or lifespan based off of fps and remove if so
+    double currentTime = Timer.getFPGATimestamp();
+    for (int cameraIndex = 0; cameraIndex < cameraTagPoses.size(); cameraIndex++) {
+      // the time between one publish and the next
+      double oneMeasureDurationSeconds = 1.0 / cameras.get(cameraIndex).getCameraSettings().fps;
+
+      double measureLifespan = oneMeasureDurationSeconds * 5; // found 5 from testing in sim
+
+      Map<Integer, List<VisionPoseMeasurement>> tagMap = cameraTagPoses.get(cameraIndex);
+
+      for (List<VisionPoseMeasurement> posesAtSeenTag : tagMap.values()) {
+        posesAtSeenTag.removeIf(
+            measurement -> currentTime - measurement.timestamp > measureLifespan);
+      }
+    }
   }
 
   @Override
@@ -266,16 +280,17 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
 
         List<VisionPoseMeasurement> posesAtSeenTag = seenTagIdmap.get(aprilTagId);
 
-        VisionPoseMeasurement possiblePoseMeasurementMatch =
-            posesAtSeenTag.get(posesAtSeenTag.size() - 1); // get latest
+        for (int i = 0; i < posesAtSeenTag.size(); i++) {
+          VisionPoseMeasurement possiblePoseMeasurementMatch = posesAtSeenTag.get(i); // get latest
 
-        // if the measurements where at different times, then dont comapare
-        if (Math.abs(poseMeasurement.timestamp - possiblePoseMeasurementMatch.timestamp)
-            > TIMESTAMP_TOLERANCE_SECONDS) {
-          continue;
+          // if the measurements where at different times, then dont comapare
+          if (Math.abs(poseMeasurement.timestamp - possiblePoseMeasurementMatch.timestamp)
+              > TIMESTAMP_TOLERANCE_SECONDS) {
+            continue;
+          }
+          return Optional.of(
+              Pair.of(knownTagsCameraIndex, Pair.of(aprilTagId, possiblePoseMeasurementMatch)));
         }
-        return Optional.of(
-            Pair.of(knownTagsCameraIndex, Pair.of(aprilTagId, possiblePoseMeasurementMatch)));
       }
     }
 
@@ -286,6 +301,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   public void addCamera(Camera camera) {
     cameras.add(camera);
     cameraInputs.add(new CameraInputsAutoLogged());
+    cameraTagPoses.add(new HashMap<>());
   }
 
   @Override

@@ -21,6 +21,7 @@ import frc.robot.subsystems.implementations.drive.DriveBase;
 import frc.robot.subsystems.implementations.drive.DriveSwerveCTRE;
 import frc.robot.subsystems.implementations.vision.VisionSubsystem;
 import frc.robot.subsystems.implementations.vision.camera.CameraPhotonSim;
+import frc.robot.subsystems.interfaces.Vision.Camera.CameraSettings;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -48,6 +49,10 @@ public class RobotConfig {
             AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
             Optional.of(drive::addVisionMeasurement));
 
+    CameraSettings simCameraSettings = new CameraSettings();
+    simCameraSettings.fps = 30;
+    simCameraSettings.resWidth = 800;
+    simCameraSettings.resHeight = 600;
     // "sim" camera that +12 inch along x axis and pitch of -45 degrees
     vision.addCamera(
         new CameraPhotonSim(
@@ -58,6 +63,7 @@ public class RobotConfig {
                     Angle.ofBaseUnits(0, Degrees),
                     Angle.ofBaseUnits(-45, Degrees),
                     Angle.ofBaseUnits(0, Degrees))),
+            simCameraSettings,
             vision.getFieldLayout(),
             () -> drive.getPose()));
     vision.addCamera(
@@ -69,6 +75,7 @@ public class RobotConfig {
                     Angle.ofBaseUnits(0, Degrees),
                     Angle.ofBaseUnits(-45, Degrees),
                     Angle.ofBaseUnits(-45, Degrees))),
+            simCameraSettings,
             vision.getFieldLayout(),
             () -> drive.getPose()));
   }

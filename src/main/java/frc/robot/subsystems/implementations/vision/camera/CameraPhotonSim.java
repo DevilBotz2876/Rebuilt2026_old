@@ -18,13 +18,14 @@ public class CameraPhotonSim extends CameraPhoton {
   public CameraPhotonSim(
       String name,
       Transform3d robotToCamera,
+      CameraSettings settings,
       AprilTagFieldLayout tagLayout,
       Supplier<Pose2d> poseSupplier) {
-    super(name, robotToCamera, tagLayout);
-
+    super(name, robotToCamera, settings, tagLayout);
     // from last year
     simCameraProperties = new SimCameraProperties();
-    simCameraProperties.setCalibration(800, 600, Rotation2d.fromDegrees(70));
+    simCameraProperties.setCalibration(
+        settings.resWidth, settings.resHeight, Rotation2d.fromDegrees(70));
     simCameraProperties.setFPS(120);
     simCameraProperties.setAvgLatencyMs(50);
     simCameraProperties.setLatencyStdDevMs(15);

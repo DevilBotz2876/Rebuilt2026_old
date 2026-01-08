@@ -7,23 +7,23 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import frc.robot.subsystems.interfaces.Vision.Camera;
 import java.util.List;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-public class CameraPhoton implements Camera {
+public class CameraPhoton extends CameraBase {
   private final PhotonCamera camera;
-  private final Transform3d robotToCamera;
-  private final String name;
   private final AprilTagFieldLayout tagLayout;
   private VisionPoseMeasurement[] poseMeasurements;
 
-  public CameraPhoton(String name, Transform3d robotToCamera, AprilTagFieldLayout tagLayout) {
-    this.name = name;
-    camera = new PhotonCamera(this.name);
-    this.robotToCamera = robotToCamera;
+  public CameraPhoton(
+      String name,
+      Transform3d robotToCamera,
+      CameraSettings settings,
+      AprilTagFieldLayout tagLayout) {
+    super(name, robotToCamera, settings);
+    camera = new PhotonCamera(getName());
     this.tagLayout = tagLayout;
   }
 
@@ -40,6 +40,7 @@ public class CameraPhoton implements Camera {
     PhotonPipelineResult result = results.get(results.size() - 1); // get latest result
     this.poseMeasurements = new VisionPoseMeasurement[1];
     VisionPoseMeasurement measurement = new VisionPoseMeasurement();
+    Transform3d robotToCamera = getRobotToCamera();
 
     if (!result.hasTargets()) {
       // no tags
@@ -119,16 +120,6 @@ public class CameraPhoton implements Camera {
               .getDistance(Translation3d.kZero);
     }
     poseMeasurements[0] = measurement;
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public Transform3d getRobotToCamera() {
-    return robotToCamera;
   }
 
   @Override

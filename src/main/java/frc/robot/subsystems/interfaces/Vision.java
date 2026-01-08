@@ -24,6 +24,12 @@ public interface Vision {
       public Pose2d cameraPose;
     }
 
+    public static class CameraSettings {
+      public int fps;
+      public int resWidth;
+      public int resHeight;
+    }
+
     public static class VisionPoseMeasurement {
       public double timestamp = -1.0;
       public Pose2d robotPose = new Pose2d();
@@ -38,6 +44,8 @@ public interface Vision {
     public String getName();
 
     public VisionPoseMeasurement[] getVisionPoseMeasurements();
+
+    public CameraSettings getCameraSettings();
   }
 
   public void updateCamera(int index);
