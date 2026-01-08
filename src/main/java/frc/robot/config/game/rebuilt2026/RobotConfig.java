@@ -46,7 +46,7 @@ public class RobotConfig {
     // no-args constructor, for now
     vision =
         new VisionSubsystem(
-            AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark),
             Optional.of(drive::addVisionMeasurement));
 
     CameraSettings simCameraSettings = new CameraSettings();
