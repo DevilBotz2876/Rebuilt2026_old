@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.interfaces.CameraInputsAutoLogged;
 import frc.robot.subsystems.interfaces.Vision;
-import frc.robot.subsystems.interfaces.Vision.Camera.CameraInputs;
 import frc.robot.subsystems.interfaces.Vision.Camera.VisionPoseMeasurement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,7 +179,8 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
     }
 
     // cant clear all at the same time because camera are not sync
-    // check if a pose has be in there for a lifespan based off of fps of data published by the camera and remove if its lifespan has passed 
+    // check if a pose has be in there for a lifespan based off of fps of data published by the
+    // camera and remove if its lifespan has passed
     double currentTime = Timer.getFPGATimestamp();
     for (int cameraIndex = 0; cameraIndex < cameraTagPoses.size(); cameraIndex++) {
       // the time between one publish and the next
@@ -219,7 +219,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                 .get(poseMeasurements[i].targetIds[j])
                 .add(poseMeasurements[i]);
           } else {
-            // make new key if first time tag is being seen 
+            // make new key if first time tag is being seen
             List<VisionPoseMeasurement> poseMeasurementList =
                 new ArrayList<VisionPoseMeasurement>();
             poseMeasurementList.add(poseMeasurements[i]);
