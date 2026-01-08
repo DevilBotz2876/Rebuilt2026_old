@@ -46,8 +46,8 @@ public class CameraPhotonSim extends CameraPhoton {
   ;
 
   @Override
-  public void updateInputs(CameraInputs inputs) {
+  public void update(CameraInputs inputs) {
     simVision.update(poseSupplier.get());
-    super.updateInputs(inputs);
+    super.update(inputs);
   }
 }

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.interfaces.CameraInputsAutoLogged;
 import frc.robot.subsystems.interfaces.Vision;
+import frc.robot.subsystems.interfaces.Vision.Camera.CameraInputs;
 import frc.robot.subsystems.interfaces.Vision.Camera.VisionPoseMeasurement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,22 +62,22 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
           continue;
         }
 
-        // more than one tag then valid, other checks not need
+        // more than one tag then valid for estimation
         if (poseMeasurement.targetIds.length >= 2) {
           validPoseMeasurements.add(poseMeasurement);
           continue;
         } else {
 
-          // one tag seen but is close then valid
+          // one tag seen but is close then validfor estimation
           if (poseMeasurement.robotToBestTargetDistanceInMeters != -1
               && poseMeasurement.robotToBestTargetDistanceInMeters
                   <= MAXIMUM_SINGLE_TAG_DISTANCE_METERS) {
             validPoseMeasurements.add(poseMeasurement);
             continue;
           }
-          // check poseMeasurement from other cameras for matching tag
+          // check measurements from other cameras for matching tag
           else {
-            // camera index, april
+            // camera index, april tag id, pose measurement
             Optional<Pair<Integer, Pair<Integer, VisionPoseMeasurement>>> matchingPoseOptional =
                 getMatchingTagPoseMeasuremnet(cameraIndex, poseMeasurement);
             if (matchingPoseOptional.isPresent()) {
@@ -123,7 +124,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
       }
     }
 
-    // debug info
+    // debug info on measurements
     if (VISION_LOGGING_DEBUG) {
       for (int cameraIndex = 0; cameraIndex < cameras.size(); cameraIndex++) {
         for (int i = 0; i < cameras.get(cameraIndex).getVisionPoseMeasurements().length; i++) {
@@ -167,6 +168,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
       }
     }
 
+    // add valid pose measurment to consumer
     for (int i = 0; i < validPoseMeasurements.size(); i++) {
       double distanceMeters = validPoseMeasurements.get(i).robotToBestTargetDistanceInMeters;
       visionMeasurementConsumer
@@ -178,7 +180,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
     }
 
     // cant clear all at the same time because camera are not sync
-    // check if a pose has be in there for "a while" or lifespan based off of fps and remove if so
+    // check if a pose has be in there for a lifespan based off of fps of data published by the camera and remove if its lifespan has passed 
     double currentTime = Timer.getFPGATimestamp();
     for (int cameraIndex = 0; cameraIndex < cameraTagPoses.size(); cameraIndex++) {
       // the time between one publish and the next
@@ -199,8 +201,10 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   public void updateCamera(int cameraIndex) {
     Camera camera = cameras.get(cameraIndex);
     CameraInputsAutoLogged inputs = cameraInputs.get(cameraIndex);
+
+    // update  and publish inputs
     Logger.processInputs("Vision/" + camera.getName(), inputs);
-    camera.updateInputs(inputs);
+    camera.update(inputs);
 
     if (visionMeasurementConsumer.isPresent()) {
 
@@ -215,6 +219,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                 .get(poseMeasurements[i].targetIds[j])
                 .add(poseMeasurements[i]);
           } else {
+            // make new key if first time tag is being seen 
             List<VisionPoseMeasurement> poseMeasurementList =
                 new ArrayList<VisionPoseMeasurement>();
             poseMeasurementList.add(poseMeasurements[i]);
@@ -223,6 +228,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
                 .put(poseMeasurements[i].targetIds[j], poseMeasurementList);
           }
         }
+        // debug infomation on measurements
         if (VISION_LOGGING_DEBUG) {
           Logger.recordOutput(
               "Vision/"
@@ -258,7 +264,7 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
     }
   }
 
-  // returns optional of pair (camera index, (aprilTag, poseMe)) or empty optional
+  // returns optional of pair (camera index, pair (aprilTag, poseMe)) or empty optional for no match
   private Optional<Pair<Integer, Pair<Integer, VisionPoseMeasurement>>>
       getMatchingTagPoseMeasuremnet(int poseCameraIndex, VisionPoseMeasurement poseMeasurement) {
     for (int knownTagsCameraIndex = 0;
@@ -279,7 +285,6 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
         }
 
         List<VisionPoseMeasurement> posesAtSeenTag = seenTagIdmap.get(aprilTagId);
-
         for (int i = 0; i < posesAtSeenTag.size(); i++) {
           VisionPoseMeasurement possiblePoseMeasurementMatch = posesAtSeenTag.get(i); // get latest
 
@@ -307,6 +312,11 @@ public class VisionSubsystem extends SubsystemBase implements Vision {
   @Override
   public List<Camera> getCameras() {
     return cameras;
+  }
+
+  @Override
+  public List<CameraInputsAutoLogged> getCameraInputs() {
+    return cameraInputs;
   }
 
   @Override

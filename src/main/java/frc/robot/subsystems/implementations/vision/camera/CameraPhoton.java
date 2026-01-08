@@ -28,7 +28,7 @@ public class CameraPhoton extends CameraBase {
   }
 
   @Override
-  public void updateInputs(CameraInputs inputs) {
+  public void update(CameraInputs inputs) {
     inputs.isConnected = camera.isConnected();
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 

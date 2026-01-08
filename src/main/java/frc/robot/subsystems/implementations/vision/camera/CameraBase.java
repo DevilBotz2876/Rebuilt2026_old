@@ -25,7 +25,7 @@ public class CameraBase implements Camera {
   }
 
   @Override
-  public void updateInputs(CameraInputs inputs) {}
+  public void update(CameraInputs inputs) {}
 
   @Override
   public VisionPoseMeasurement[] getVisionPoseMeasurements() {

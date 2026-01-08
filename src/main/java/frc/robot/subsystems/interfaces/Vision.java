@@ -37,7 +37,7 @@ public interface Vision {
       public double robotToBestTargetDistanceInMeters = -1.0;
     }
 
-    public void updateInputs(CameraInputs inputs);
+    public void update(CameraInputs inputs);
 
     public Transform3d getRobotToCamera();
 
@@ -53,6 +53,8 @@ public interface Vision {
   public void addCamera(Camera camera);
 
   public List<Camera> getCameras();
+
+  public List<CameraInputsAutoLogged> getCameraInputs();
 
   public AprilTagFieldLayout getFieldLayout();
 }
