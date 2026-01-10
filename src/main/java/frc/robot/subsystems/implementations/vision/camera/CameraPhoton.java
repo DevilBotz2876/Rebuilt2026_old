@@ -32,94 +32,52 @@ public class CameraPhoton extends CameraBase {
     inputs.isConnected = camera.isConnected();
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
-    if (results.isEmpty()) {
+    if (results.isEmpty() || !inputs.isConnected) {
       this.poseMeasurements = new VisionPoseMeasurement[0];
       return;
     }
 
     PhotonPipelineResult result = results.get(results.size() - 1); // get latest result
     this.poseMeasurements = new VisionPoseMeasurement[1];
-    VisionPoseMeasurement measurement = new VisionPoseMeasurement();
-    Transform3d robotToCamera = getRobotToCamera();
 
+    // no tags
     if (!result.hasTargets()) {
-      // no tags
-      measurement.targetIds = new int[0];
       inputs.targetIds = new int[0];
+      poseMeasurements[0] = new VisionPoseMeasurement();
+      return;
+    }
 
-    } else if (result.multitagResult.isPresent()) {
-      // 2+ tags
+    // 2+ tags
+    if (result.multitagResult.isPresent()) {
       MultiTargetPNPResult multitagResult = result.multitagResult.get();
-
-      Pose2d cameraPose =
+      inputs.cameraPose =
           new Pose3d(Translation3d.kZero, Rotation3d.kZero)
               .plus(multitagResult.estimatedPose.best)
               .toPose2d();
-      inputs.cameraPose = cameraPose;
+      inputs.targetIds =
+          multitagResult.fiducialIDsUsed.stream().mapToInt(Short::toUnsignedInt).toArray();
+    }
 
-      inputs.targetIds = new int[multitagResult.fiducialIDsUsed.size()];
-      for (int j = 0; j < inputs.targetIds.length; j++) {
-        inputs.targetIds[j] = multitagResult.fiducialIDsUsed.get(j).intValue();
-      }
-
-      measurement.robotPose =
-          cameraPose.transformBy(
-              (new Transform2d(
-                      robotToCamera.getTranslation().toTranslation2d(),
-                      robotToCamera.getRotation().toRotation2d()))
-                  .inverse());
-      measurement.targetIds = inputs.targetIds;
-      measurement.timestamp = result.getTimestampSeconds();
-      // robot to camera + camera to target = robot to target
-      measurement.robotToBestTargetDistanceInMeters =
-          robotToCamera
-              .plus(result.getBestTarget().getBestCameraToTarget())
-              .getTranslation()
-              .getDistance(Translation3d.kZero);
-
-      inputs.cameraDistanceToTargetMeters =
-          result
-              .getBestTarget()
-              .getBestCameraToTarget()
-              .getTranslation()
-              .getDistance(Translation3d.kZero);
-    } else {
-      // one tag
+    // one tag
+    else {
       // use location on field to determine pose
-
       Pose3d aprilTagPose = tagLayout.getTagPose(result.getBestTarget().fiducialId).get();
-      Pose2d cameraPose =
+      inputs.cameraPose =
           new Pose3d(aprilTagPose.getTranslation(), aprilTagPose.getRotation())
               .plus(result.getBestTarget().bestCameraToTarget.inverse())
               .toPose2d();
-      inputs.cameraPose = cameraPose;
       inputs.targetIds = new int[1];
-      inputs.targetIds[0] = result.getBestTarget().fiducialId;
-
-      measurement.robotPose =
-          cameraPose.transformBy(
-              (new Transform2d(
-                      robotToCamera.getTranslation().toTranslation2d(),
-                      robotToCamera.getRotation().toRotation2d()))
-                  .inverse());
-      measurement.targetIds = inputs.targetIds;
-      measurement.timestamp = result.getTimestampSeconds();
-
-      // robot to camera + camera to target = robot to target
-      measurement.robotToBestTargetDistanceInMeters =
-          robotToCamera
-              .plus(result.getBestTarget().getBestCameraToTarget())
-              .getTranslation()
-              .getDistance(Translation3d.kZero);
-
-      inputs.cameraDistanceToTargetMeters =
-          result
-              .getBestTarget()
-              .getBestCameraToTarget()
-              .getTranslation()
-              .getDistance(Translation3d.kZero);
     }
-    poseMeasurements[0] = measurement;
+
+    inputs.cameraDistanceToTargetMeters =
+        result
+            .getBestTarget()
+            .getBestCameraToTarget()
+            .getTranslation()
+            .getDistance(Translation3d.kZero);
+
+    poseMeasurements[0] = createMeasurement(result, inputs.cameraPose, inputs.targetIds);
+    ;
   }
 
   @Override
@@ -129,5 +87,32 @@ public class CameraPhoton extends CameraBase {
 
   public PhotonCamera getPhotonCamera() {
     return camera;
+  }
+
+  private VisionPoseMeasurement createMeasurement(
+      PhotonPipelineResult result, Pose2d cameraPose, int[] targetIds) {
+    VisionPoseMeasurement measurement = new VisionPoseMeasurement();
+
+    measurement.targetIds = targetIds;
+    measurement.timestamp = result.getTimestampSeconds();
+
+    Transform3d robotToCamera = getRobotToCamera();
+    measurement.robotPose =
+        cameraPose.transformBy(
+            (new Transform2d(
+                    robotToCamera.getTranslation().toTranslation2d(),
+                    robotToCamera.getRotation().toRotation2d()))
+                .inverse());
+
+    // robot to camera + camera to target = robot to target
+    // TODO: Determine best start location for calculated distance
+    // the distance should be measured at a place that is eas to verify in person
+    measurement.robotToBestTargetDistanceInMeters =
+        robotToCamera
+            .plus(result.getBestTarget().getBestCameraToTarget())
+            .getTranslation()
+            .getDistance(Translation3d.kZero);
+
+    return measurement;
   }
 }
