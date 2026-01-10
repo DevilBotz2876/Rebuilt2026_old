@@ -77,7 +77,6 @@ public class CameraPhoton extends CameraBase {
             .getDistance(Translation3d.kZero);
 
     poseMeasurements[0] = createMeasurement(result, inputs.cameraPose, inputs.targetIds);
-    ;
   }
 
   @Override
@@ -106,7 +105,7 @@ public class CameraPhoton extends CameraBase {
 
     // robot to camera + camera to target = robot to target
     // TODO: Determine best start location for calculated distance
-    // the distance should be measured at a place that is eas to verify in person
+    // the distance should be measured at a place that is easy to verify in person
     measurement.robotToBestTargetDistanceInMeters =
         robotToCamera
             .plus(result.getBestTarget().getBestCameraToTarget())
