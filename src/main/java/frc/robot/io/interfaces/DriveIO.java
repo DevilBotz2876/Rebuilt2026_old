@@ -10,7 +10,6 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.subsystems.implementations.drive.generated.CommandSwerveDrivetrain;
 import org.littletonrobotics.junction.AutoLog;
-import swervelib.SwerveDrive;
 
 public class DriveIO {
   @AutoLog
@@ -55,20 +54,6 @@ public class DriveIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public void updateInputs(DriveIOInputs inputs, SwerveDrive swerveDrive) {
-    inputs.pose = swerveDrive.getPose();
-    inputs.poseX = inputs.pose.getTranslation().getX();
-    inputs.poseY = inputs.pose.getTranslation().getY();
-    inputs.poseRotInDegrees = inputs.pose.getRotation().getDegrees();
-    inputs.flippedPose = FlippingUtil.flipFieldPose(inputs.pose);
-    inputs.flippedPoseX = inputs.flippedPose.getTranslation().getX();
-    inputs.flippedPoseY = inputs.flippedPose.getTranslation().getY();
-    inputs.flippedPoseRotInDegrees = inputs.flippedPose.getRotation().getDegrees();
-    if (!Robot.isSimulation()) {
-      inputs.currentAcceleration = swerveDrive.getAccel().get();
-    }
-  }
-
   public void updateInputs(
       DriveIOInputs inputs, ModuleIOInputs[] moduleInputs, CommandSwerveDrivetrain drivetrain) {
     inputs.pose = drivetrain.getState().Pose;
